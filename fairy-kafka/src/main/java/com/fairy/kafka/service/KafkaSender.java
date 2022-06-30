@@ -55,6 +55,7 @@ public class KafkaSender {
             @Override
             public Object doInOperations(KafkaOperations<String, String> operations) {
                 operations.send(record);
+                int i =1/0;
                 return true;
             }
         });
