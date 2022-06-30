@@ -1,16 +1,14 @@
 package com.fairy.kafka.client;
 
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.PartitionInfo;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author 鹿少年
@@ -64,21 +62,20 @@ public class MqConsumer {
 
         consumer.subscribe(Arrays.asList(TOPIC_NAME));
         // 消费指定分区
-//        consumer.assign(Arrays.asList(new TopicPartition(TOPIC_NAME, 0)));
+        //consumer.assign(Arrays.asList(new TopicPartition(TOPIC_NAME, 0)));
 
         //消息回溯消费
-        /*consumer.assign(Arrays.asList(new TopicPartition(TOPIC_NAME, 0)));
-        consumer.seekToBeginning(Arrays.asList(new TopicPartition(TOPIC_NAME, 0)));*/
+        //consumer.assign(Arrays.asList(new TopicPartition(TOPIC_NAME, 0)));
+        //consumer.seekToBeginning(Arrays.asList(new TopicPartition(TOPIC_NAME, 0)));
 
         //指定offset消费
-        /*consumer.assign(Arrays.asList(new TopicPartition(TOPIC_NAME, 0)));
-        consumer.seek(new TopicPartition(TOPIC_NAME, 0), 10);*/
+        //consumer.assign(Arrays.asList(new TopicPartition(TOPIC_NAME, 0)));
+        //consumer.seek(new TopicPartition(TOPIC_NAME, 0), 10);
 
         //从指定时间点开始消费
-
-        /*List<PartitionInfo> topicPartitions = consumer.partitionsFor(TOPIC_NAME);
+      List<PartitionInfo> topicPartitions = consumer.partitionsFor(TOPIC_NAME);
         //从1小时前开始消费
-        long fetchDataTime = new Date().getTime() - 1000 * 60 * 60;
+        long fetchDataTime = System.currentTimeMillis() - 1000 * 60 * 60;
         Map<TopicPartition, Long> map = new HashMap<>();
         for (PartitionInfo par : topicPartitions) {
             map.put(new TopicPartition(TOPIC_NAME, par.partition()), fetchDataTime);
@@ -87,16 +84,17 @@ public class MqConsumer {
         for (Map.Entry<TopicPartition, OffsetAndTimestamp> entry : parMap.entrySet()) {
             TopicPartition key = entry.getKey();
             OffsetAndTimestamp value = entry.getValue();
-            if (key == null || value == null) continue;
+            if (key == null || value == null) {
+                continue;
+            }
             Long offset = value.offset();
-            System.out.println("partition-" + key.partition() + "|offset-" + offset);
-            System.out.println();
+            logger.info("partition-" + key.partition() + "|offset-" + offset);
             //根据消费里的timestamp确定offset
             if (value != null) {
                 consumer.assign(Arrays.asList(key));
                 consumer.seek(key, offset);
             }
-        }*/
+        }
 
 
         while (true) {
@@ -105,8 +103,7 @@ public class MqConsumer {
              */
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
             for (ConsumerRecord<String, String> record : records) {
-                logger.info("收到消息：partition ={},offset = {}, key = {}, value = {}", record.partition(),
-                        record.offset(), record.key(), record.value());
+                logger.info("收到消息：partition ={},offset = {}, key = {}, value = {}", record.partition(), record.offset(), record.key(), record.value());
             }
 
             if (records.count() > 0) {
