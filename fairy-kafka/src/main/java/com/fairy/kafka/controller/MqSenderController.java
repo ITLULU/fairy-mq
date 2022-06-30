@@ -91,7 +91,7 @@ public class MqSenderController {
         Map<String, Object> headers = new HashMap<>();
 
         headers.put(KafkaHeaders.TOPIC, TOPIC_NAME);
-        headers.put(KafkaHeaders.PARTITION_ID, 2);
+        headers.put(KafkaHeaders.PARTITION_ID, 1);
         headers.put(KafkaHeaders.MESSAGE_KEY, "key-1111");
         headers.put(KafkaHeaders.RECEIVED_MESSAGE_KEY, "recived-key-1111");
 
@@ -131,7 +131,7 @@ public class MqSenderController {
     @GetMapping("/sendtime")
     public String sendtime() throws InterruptedException {
         Order order = new Order(22, 100, 1, 1000.00);
-        kafkaTemplate.send(TOPIC_NAME, 2, System.currentTimeMillis(), "key", JSON.toJSONString(order));
+        kafkaTemplate.send(TOPIC_NAME, 1, System.currentTimeMillis(), "key", JSON.toJSONString(order));
         return "ok";
     }
 
