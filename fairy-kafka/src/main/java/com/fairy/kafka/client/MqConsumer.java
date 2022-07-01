@@ -26,7 +26,7 @@ public class MqConsumer {
         // 消费分组名
         props.put(ConsumerConfig.GROUP_ID_CONFIG, CONSUMER_GROUP_NAME);
         // 是否自动提交offset，默认就是true
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         // 自动提交offset的间隔时间
 //        props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
 //        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
