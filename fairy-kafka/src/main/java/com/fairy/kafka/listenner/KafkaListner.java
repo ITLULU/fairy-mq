@@ -70,7 +70,7 @@ public class KafkaListner {
         log.info("消费监听本次拉取数据量：{}", records.size());
         for (ConsumerRecord<String, String> record : records) {
             String value = record.value();
-            log.info("消费者组fairyGroupTopic2消费 topic 分区2,3,4数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
+            log.info("消费者组fairyGroupTopic2消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
         }
         ack.acknowledge();
     }
@@ -80,38 +80,38 @@ public class KafkaListner {
      *
      * @param record
      */
-    @KafkaListener(groupId = "${kafka.consumer.group-id3}", containerFactory = "recordListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
+/*    @KafkaListener(groupId = "${kafka.consumer.group-id3}", containerFactory = "recordListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
     public void fairyGroupTopic3(ConsumerRecord<String, String> record) {
         String value = record.value();
         log.info("消费者组fairyGroupTopic3消费 topic 分区2,3,4数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
-    }
-
+    }*/
+/*
     @KafkaListener(groupId = "${kafka.consumer.group-id4}", containerFactory = "timeListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
     public void fairyGroupTopic4(List<ConsumerRecord<String, String>> records) {
         log.info("消费监听本次拉取数据量：{}", records.size());
         for (ConsumerRecord<String, String> record : records) {
             String value = record.value();
-            log.info("消费者组fairyGroupTopic4消费 topic 分区2,3,4数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
+            log.info("消费者组fairyGroupTopic4消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
         }
-    }
-
+    }*/
+/*
 
     @KafkaListener(groupId = "${kafka.consumer.group-id5}", containerFactory = "countListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
     public void fairyGroupTopic5(List<ConsumerRecord<String, String>> records) {
         log.info("消费监听本次拉取数据量：{}", records.size());
         for (ConsumerRecord<String, String> record : records) {
             String value = record.value();
-            log.info("消费者组fairyGroupTopic5消费 topic 分区2,3,4数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
+            log.info("消费者组fairyGroupTopic5消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
         }
-    }
+    }*/
 
 
-    @KafkaListener(groupId = "${kafka.consumer.group-id6}", containerFactory = "timeCountListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
+/*    @KafkaListener(groupId = "${kafka.consumer.group-id6}", containerFactory = "timeCountListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
     public void fairyGroupTopic6(List<ConsumerRecord<String, String>> records) {
         log.info("消费监听本次拉取数据量：{}", records.size());
         for (ConsumerRecord<String, String> record : records) {
             String value = record.value();
-            log.info("消费者组fairyGroupTopic6消费 topic 分区2,3,4数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
+            log.info("消费者组fairyGroupTopic6消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
         }
-    }
+    }*/
 }
