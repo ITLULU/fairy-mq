@@ -30,6 +30,7 @@ public class KafkaSender {
     public void synSendMessage(Message msg) {
         try {
             kafkaTemplate.send(msg).get();
+            int i=1/0;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -38,6 +39,7 @@ public class KafkaSender {
     public void asynSendMessage(Message msg) {
         try {
             ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(msg);
+            int i =1/0;
             future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
                 @Override
                 public void onFailure(Throwable ex) {
@@ -70,11 +72,9 @@ public class KafkaSender {
     @Transactional
     public void doTransactionSend2(Message record) {
         transKafkaTemplate.send(record);
-        int i = 1 / 0;
     }
     @Transactional
     public void doTransactionSend3(String topic, Integer partition , String key,Object data) {
         transKafkaTemplate.send(topic,partition,System.currentTimeMillis(),key,data);
-        int i = 1 / 0;
     }
 }

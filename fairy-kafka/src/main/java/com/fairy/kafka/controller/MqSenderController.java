@@ -107,8 +107,8 @@ public class MqSenderController {
         return "ok";
     }
 
-    @GetMapping("/sendsy")
-    public String sendsy() throws InterruptedException {
+    @GetMapping("/sendSYN")
+    public String sendSYN() throws InterruptedException {
         Order order = new Order(22, 100, 1, 1000.00);
         Map<String, Object> headers = new HashMap<>();
 
@@ -121,8 +121,8 @@ public class MqSenderController {
         return "ok";
     }
 
-    @GetMapping("/sendasy")
-    public String sendasy() throws InterruptedException {
+    @GetMapping("/sendAsy")
+    public String sendAsy() throws InterruptedException {
         Order order = new Order(22, 100, 1, 1000.00);
         Map<String, Object> headers = new HashMap<>();
 
