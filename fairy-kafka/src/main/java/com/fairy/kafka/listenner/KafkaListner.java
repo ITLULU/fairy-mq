@@ -32,7 +32,7 @@ public class KafkaListner {
      * @param records
      * @param ack
      */
-/*    @KafkaListener(id="group-listener",groupId = "${kafka.consumer.group-id}", containerFactory = "manualIMListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0"})})
+    @KafkaListener(id="group-listener",groupId = "${kafka.consumer.group-id}", containerFactory = "manualIMListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0","1"})})
     public void fairyGroupTopic(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
         log.info("消费监听本次拉取数据量：{}", records.size());
         for (ConsumerRecord<String, String> record : records) {
@@ -43,7 +43,7 @@ public class KafkaListner {
         doFilter(records);
         //手动提交ack 移动偏移量
 //        ack.acknowledge();
-    }*/
+    }
 
     /**
      * 对数据进行幂等校验 如果数据时没有消费的数据 可以将数据存储记录 以topic-partition-offset做为唯一索引来判断数据是否是已经消费的数据
@@ -65,15 +65,15 @@ public class KafkaListner {
     }
 
 
-/*    @KafkaListener(groupId = "${kafka.consumer.group-id2}", containerFactory = "manualListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
+    @KafkaListener(groupId = "${kafka.consumer.group-id2}", containerFactory = "manualListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
     public void fairyGroupTopic2(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
         log.info("消费监听本次拉取数据量：{}", records.size());
         for (ConsumerRecord<String, String> record : records) {
             String value = record.value();
             log.info("消费者组fairyGroupTopic2消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
         }
-//        ack.acknowledge();
-    }*/
+        ack.acknowledge();
+    }
 
     /**
      * 一次拉取一条数据
@@ -85,17 +85,16 @@ public class KafkaListner {
         String value = record.value();
         log.info("消费者组fairyGroupTopic3消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
     }*/
-    @KafkaListener(groupId = "${kafka.consumer.group-id4}", containerFactory = "timeListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
+ /*   @KafkaListener(groupId = "${kafka.consumer.group-id4}", containerFactory = "timeListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
     public void fairyGroupTopic4(List<ConsumerRecord<String, String>> records) {
         log.info("消费监听本次拉取数据量：{}", records.size());
         for (ConsumerRecord<String, String> record : records) {
             String value = record.value();
             log.info("消费者组fairyGroupTopic4消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
         }
-    }
-/*
+    }*/
 
-    @KafkaListener(groupId = "${kafka.consumer.group-id5}", containerFactory = "countListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
+/*    @KafkaListener(groupId = "${kafka.consumer.group-id5}", containerFactory = "countListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
     public void fairyGroupTopic5(List<ConsumerRecord<String, String>> records) {
         log.info("消费监听本次拉取数据量：{}", records.size());
         for (ConsumerRecord<String, String> record : records) {

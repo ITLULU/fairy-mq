@@ -17,12 +17,13 @@ import java.util.concurrent.TimeUnit;
  * @date 2022/5/29 15:54
  */
 public class MqProduct {
-    private final static String TOPIC_NAME = "my-replicated-topic";
+//    private final static String TOPIC_NAME = "my-replicated-topic";
+private final static String TOPIC_NAME = "fairy-partition-replicate";
     private static Logger logger = LoggerFactory.getLogger(MqProduct.class);
 
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.36.138:9092");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "node01:9091,node01:9092,node01:9093");
          /*
          发出消息持久化机制参数
         （1）acks=0： 表示producer不需要等待任何broker确认收到消息的回复，就可以继续发送下一条消息。性能最高，但是最容易丢消息。
@@ -67,8 +68,8 @@ public class MqProduct {
             /*ProducerRecord<String, String> producerRecord = new ProducerRecord<String, String>(TOPIC_NAME
                     , 0, order.getOrderId().toString(), JSON.toJSONString(order));*/
             //未指定发送分区，具体发送的分区计算公式：hash(key)%partitionNum
-            ProducerRecord<String, String> producerRecord = new ProducerRecord<String, String>(TOPIC_NAME
-                    , order.getOrderId().toString(), JSON.toJSONString(order));
+            ProducerRecord<String, String> producerRecord = new ProducerRecord<String, String>(TOPIC_NAME,0,
+                    order.getOrderId().toString(), JSON.toJSONString(order));
 
             //等待消息发送成功的同步阻塞方法
             RecordMetadata metadata = producer.send(producerRecord).get();

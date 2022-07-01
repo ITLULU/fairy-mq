@@ -22,7 +22,7 @@ public class MqConsumer {
 
     public static void main(String[] args) {
         Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.36.138:9092");
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "node01:9091,node01:9092,node01:9093");
         // 消费分组名
         props.put(ConsumerConfig.GROUP_ID_CONFIG, CONSUMER_GROUP_NAME);
         // 是否自动提交offset，默认就是true
@@ -73,7 +73,7 @@ public class MqConsumer {
         //consumer.seek(new TopicPartition(TOPIC_NAME, 0), 10);
 
         //从指定时间点开始消费
-      List<PartitionInfo> topicPartitions = consumer.partitionsFor(TOPIC_NAME);
+     /*   List<PartitionInfo> topicPartitions = consumer.partitionsFor(TOPIC_NAME);
         //从1小时前开始消费
         long fetchDataTime = System.currentTimeMillis() - 1000 * 60 * 60;
         Map<TopicPartition, Long> map = new HashMap<>();
@@ -94,7 +94,7 @@ public class MqConsumer {
                 consumer.assign(Arrays.asList(key));
                 consumer.seek(key, offset);
             }
-        }
+        }*/
 
 
         while (true) {

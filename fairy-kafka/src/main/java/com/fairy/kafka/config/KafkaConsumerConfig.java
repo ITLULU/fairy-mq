@@ -76,8 +76,8 @@ public class KafkaConsumerConfig {
      *
      * @return
      */
- /*   @Bean("manualIMListenerContainerFactory")
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer> manualIMListenerContainerFactor(ConcurrentKafkaListenerContainerFactoryConfigurer configurer, ConsumerFactory consumerFactory) {
+    @Bean("manualIMListenerContainerFactory")
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer> manualIMListenerContainerFactor(ConsumerFactory consumerFactory) {
         ConcurrentKafkaListenerContainerFactory factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         //设置并发量，小于或等于Topic的分区数 设置消费者组中的线程数量
@@ -88,18 +88,17 @@ public class KafkaConsumerConfig {
         factory.setAutoStartup(true);
         //消费一次提交一次  MANUAL 表示批量提交一次
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
-        configurer.configure(factory, consumerFactory);
 
         return factory;
-    }*/
+    }
 
     /**
      * 批量消费后 一次提交偏移量
      *
      * @return
      */
-/*    @Bean("manualListenerContainerFactory")
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> manualListenerContainerFactory(ConcurrentKafkaListenerContainerFactoryConfigurer configurer, ConsumerFactory consumerFactory) {
+    @Bean("manualListenerContainerFactory")
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> manualListenerContainerFactory(/*ConcurrentKafkaListenerContainerFactoryConfigurer configurer,*/ ConsumerFactory consumerFactory) {
         ConcurrentKafkaListenerContainerFactory factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         //设置并发量，小于或等于Topic的分区数 设置消费者组中的线程数量
@@ -112,9 +111,9 @@ public class KafkaConsumerConfig {
 
         //消费一次提交一次  MANUAL 表示批量提交一次
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
-        configurer.configure(factory,consumerFactory);
+//        configurer.configure(factory,consumerFactory);
         return factory;
-    }*/
+    }
 
     /**
      * record 模式 消费一条数据就提交 不可设置ack 不可设置批量消费
@@ -142,7 +141,7 @@ public class KafkaConsumerConfig {
      * @param consumerFactory
      * @return
      */
-    @Bean("timeListenerContainerFactory")
+/*    @Bean("timeListenerContainerFactory")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer> timeListenerContainerFactory(ConsumerFactory consumerFactory) {
 
         ConcurrentKafkaListenerContainerFactory factory = new ConcurrentKafkaListenerContainerFactory<>();
@@ -155,7 +154,7 @@ public class KafkaConsumerConfig {
         factory.getContainerProperties().setAckTime(30000);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.TIME);
         return factory;
-    }
+    }*/
 
     /**
      * COUNT    当每一批poll()的数据被消费者监听器（ListenerConsumer）处理之后，被处理record数量大于等于COUNT时提交
@@ -163,7 +162,7 @@ public class KafkaConsumerConfig {
      * @param consumerFactory
      * @return
      */
-/*    @Bean("countListenerContainerFactory")
+    @Bean("countListenerContainerFactory")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> countListenerContainerFactory(
             ConsumerFactory<String, String> consumerFactory) {
 
@@ -176,7 +175,7 @@ public class KafkaConsumerConfig {
         factory.getContainerProperties().setAckCount(5);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.COUNT);
         return factory;
-    }*/
+    }
 
 
     /**
