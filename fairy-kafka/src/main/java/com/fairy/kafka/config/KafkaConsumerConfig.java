@@ -66,8 +66,7 @@ public class KafkaConsumerConfig {
     }
 
 
-    @Bean
-    @ConditionalOnMissingBean(name = "consumerFactory")
+    @Bean("consumerFactory")
     public ConsumerFactory consumerFactory() {
         DefaultKafkaConsumerFactory factory = new DefaultKafkaConsumerFactory(consumerConfigs());
         return factory;
@@ -79,9 +78,8 @@ public class KafkaConsumerConfig {
      *
      * @return
      */
-    @Bean
-    @ConditionalOnMissingBean(name = "kafkaListenerContainerFactory")
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
+    @Bean("manualIMListenerContainerFactory")
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> manualIMListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         //设置并发量，小于或等于Topic的分区数 设置消费者组中的线程数量
@@ -89,7 +87,7 @@ public class KafkaConsumerConfig {
         //必须 设置为批量监听
         factory.setBatchListener(true);
         //消费者监听器自启
-        factory.setAutoStartup(true);
+//        factory.setAutoStartup(true);
         //消费一次提交一次  MANUAL 表示批量提交一次
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         return factory;
@@ -100,8 +98,7 @@ public class KafkaConsumerConfig {
      *
      * @return
      */
-    @Bean
-    @ConditionalOnMissingBean(name = "manualListenerContainerFactory")
+   /* @Bean("manualListenerContainerFactory")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> manualListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
@@ -109,11 +106,13 @@ public class KafkaConsumerConfig {
         factory.setConcurrency(consumerProperties.getConcurrency());
         //必须 设置为批量监听
         factory.setBatchListener(true);
+        factory.setAutoStartup(true);
+
         factory.getContainerProperties().setPollTimeout(1500);
         //消费一次提交一次  MANUAL 表示批量提交一次
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         return factory;
-    }
+    }*/
 
     /**
      * record 模式 消费一条数据就提交
@@ -121,17 +120,19 @@ public class KafkaConsumerConfig {
      * @param consumerFactory
      * @return
      */
-    @Bean("recordListenerContainerFactory")
+/*    @Bean("recordListenerContainerFactory")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> recordListenerContainerFactory(
             ConsumerFactory<String, String> consumerFactory) {
 
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
+        factory.setAutoStartup(true);
+
         factory.getContainerProperties().setPollTimeout(1500);
         //配置手动提交offset
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
         return factory;
-    }
+    }*/
 
     /**
      * TIME     当每一批poll()的数据被消费者监听器（ListenerConsumer）处理之后，距离上次提交时间大于TIME时提交
@@ -139,18 +140,20 @@ public class KafkaConsumerConfig {
      * @param consumerFactory
      * @return
      */
-    @Bean("timeListenerContainerFactory")
+/*    @Bean("timeListenerContainerFactory")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> timeListenerContainerFactory(
             ConsumerFactory<String, String> consumerFactory) {
 
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
+        factory.setAutoStartup(true);
+
         factory.getContainerProperties().setPollTimeout(2000);
         factory.getContainerProperties().setAckTime(10000);
         //配置手动提交offset
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.TIME);
         return factory;
-    }
+    }*/
 
     /**
      * COUNT    当每一批poll()的数据被消费者监听器（ListenerConsumer）处理之后，被处理record数量大于等于COUNT时提交
@@ -158,18 +161,20 @@ public class KafkaConsumerConfig {
      * @param consumerFactory
      * @return
      */
-    @Bean("countListenerContainerFactory")
+/*    @Bean("countListenerContainerFactory")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> countListenerContainerFactory(
             ConsumerFactory<String, String> consumerFactory) {
 
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
+        factory.setAutoStartup(true);
+
         factory.getContainerProperties().setPollTimeout(1500);
         factory.getContainerProperties().setAckCount(5);
         //配置手动提交offset
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.COUNT);
         return factory;
-    }
+    }*/
 
 
     /**
@@ -178,7 +183,7 @@ public class KafkaConsumerConfig {
      * @param consumerFactory
      * @return
      */
-    @Bean("timeCountListenerContainerFactory")
+ /*   @Bean("timeCountListenerContainerFactory")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> timeCountListenerContainerFactory(
             ConsumerFactory<String, String> consumerFactory) {
 
@@ -186,13 +191,15 @@ public class KafkaConsumerConfig {
         factory.setConsumerFactory(consumerFactory);
         factory.getContainerProperties().setPollTimeout(2000);
         factory.getContainerProperties().setAckCount(5);
+        factory.setAutoStartup(true);
+
         factory.getContainerProperties().setAckTime(10000);
 
 
         //配置手动提交offset
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.COUNT_TIME);
         return factory;
-    }
+    }*/
 
     /**
      * 自定义topic

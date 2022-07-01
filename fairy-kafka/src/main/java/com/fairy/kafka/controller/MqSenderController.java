@@ -41,7 +41,7 @@ public class MqSenderController {
 
     @GetMapping("/send")
     public String sender() throws InterruptedException {
-        int msgNum = 50;
+        int msgNum = 6;
         final CountDownLatch countDownLatch = new CountDownLatch(msgNum);
         for (int i = 1; i <= msgNum; i++) {
             Order order = new Order(i, 100 + i, 1, 1000.00);

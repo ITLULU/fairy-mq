@@ -80,6 +80,8 @@
     <logger name="org.apache.ibatis" level="DEBUG"/>
     <logger name="springfox.documentation.spring.web" level="ERROR"/>
     <logger name="org.springframework.web" level="ERROR"/>
+    <logger name="org.springframework.kafka.core" level="ERROR"/>
+    <logger name="org.springframework.kafka.listener" level="ERROR"/>
     <logger name="org.springframework.core" level="ERROR"/>
 </configuration>
 
