@@ -2,6 +2,7 @@ package com.fairy.kafka;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @version 1.0
  * @date 2022/5/29 15:49
  */
+@EnableScheduling
 @EnableTransactionManagement
 @SpringBootApplication
 public class KafkaApp {
