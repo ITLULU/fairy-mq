@@ -39,7 +39,7 @@ public class MqSenderController {
     @Autowired
     private KafkaSender kafkaSender;
 
-    @GetMapping("/sender")
+    @GetMapping("/send")
     public String sender() throws InterruptedException {
         int msgNum = 50;
         final CountDownLatch countDownLatch = new CountDownLatch(msgNum);
@@ -54,7 +54,7 @@ public class MqSenderController {
         return "ok";
     }
 
-    @GetMapping("/senderone")
+    @GetMapping("/send/one")
     public String senderone() throws InterruptedException {
         Order order = new Order(22, 100, 1, 1000.00);
         Map<String, Object> headers = new HashMap<>();
@@ -69,7 +69,7 @@ public class MqSenderController {
         return "ok";
     }
 
-    @GetMapping("/sendetrans1")
+    @GetMapping("/send/trans1")
     public String sendetrans1() throws InterruptedException {
         Order order = new Order(22, 100, 1, 1000.00);
         Map<String, Object> headers = new HashMap<>();
@@ -85,7 +85,7 @@ public class MqSenderController {
         return "ok";
     }
 
-    @GetMapping("/sendetrans2")
+    @GetMapping("/send/trans2")
     public String sendetrans2() throws InterruptedException {
         Order order = new Order(22, 100, 1, 1000.00);
         Map<String, Object> headers = new HashMap<>();
@@ -100,14 +100,14 @@ public class MqSenderController {
         return "ok";
     }
 
-    @GetMapping("/sendetrans3")
+    @GetMapping("/send/trans3")
     public String sendetrans3() throws InterruptedException {
         Order order = new Order(22, 100, 1, 1000.00);
         kafkaSender.doTransactionSend3(TOPIC_NAME,0,"key111",JSON.toJSONString(order));
         return "ok";
     }
 
-    @GetMapping("/sendSYN")
+    @GetMapping("/send/syn")
     public String sendSYN() throws InterruptedException {
         Order order = new Order(22, 100, 1, 1000.00);
         Map<String, Object> headers = new HashMap<>();
@@ -121,7 +121,7 @@ public class MqSenderController {
         return "ok";
     }
 
-    @GetMapping("/sendAsy")
+    @GetMapping("/send/asyn")
     public String sendAsy() throws InterruptedException {
         Order order = new Order(22, 100, 1, 1000.00);
         Map<String, Object> headers = new HashMap<>();
@@ -135,14 +135,14 @@ public class MqSenderController {
         return "ok";
     }
 
-    @GetMapping("/sendtime")
+    @GetMapping("/send/time")
     public String sendtime() throws InterruptedException {
         Order order = new Order(22, 100, 1, 1000.00);
         kafkaTemplate.send(TOPIC_NAME, 1, System.currentTimeMillis(), "key", JSON.toJSONString(order));
         return "ok";
     }
 
-    @GetMapping("/sendtime1")
+    @GetMapping("/send/time1")
     public String sendtime1() throws InterruptedException {
         Order order = new Order(22, 100, 1, 1000.00);
         kafkaTemplate.send(TOPIC_NAME, "key", JSON.toJSONString(order));
