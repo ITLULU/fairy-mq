@@ -1,7 +1,9 @@
 package com.fairy.kafka.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -21,6 +23,9 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 public class KafkaSender {
     @Autowired
     private KafkaTemplate kafkaTemplate;
+    @Autowired
+//    @Qualifier("transKafkaTemplate")
+    private KafkaTemplate transKafkaTemplate;
 
     public void synSendMessage(Message msg) {
         try {
@@ -51,7 +56,7 @@ public class KafkaSender {
     }
 
     public void doTransactionSend(Message record) {
-        Object result = kafkaTemplate.executeInTransaction(new KafkaOperations.OperationsCallback<String, String, Object>() {
+        Object result = transKafkaTemplate.executeInTransaction(new KafkaOperations.OperationsCallback<String, String, Object>() {
             @Override
             public Object doInOperations(KafkaOperations<String, String> operations) {
                 operations.send(record);
@@ -64,8 +69,12 @@ public class KafkaSender {
 
     @Transactional
     public void doTransactionSend2(Message record) {
-        kafkaTemplate.send(record);
+        transKafkaTemplate.send(record);
         int i = 1 / 0;
     }
-
+    @Transactional
+    public void doTransactionSend3(String topic, Integer partition , String key,Object data) {
+        transKafkaTemplate.send(topic,partition,System.currentTimeMillis(),key,data);
+        int i = 1 / 0;
+    }
 }

@@ -100,6 +100,13 @@ public class MqSenderController {
         return "ok";
     }
 
+    @GetMapping("/sendetrans3")
+    public String sendetrans3() throws InterruptedException {
+        Order order = new Order(22, 100, 1, 1000.00);
+        kafkaSender.doTransactionSend3(TOPIC_NAME,0,"key111",JSON.toJSONString(order));
+        return "ok";
+    }
+
     @GetMapping("/sendsy")
     public String sendsy() throws InterruptedException {
         Order order = new Order(22, 100, 1, 1000.00);
