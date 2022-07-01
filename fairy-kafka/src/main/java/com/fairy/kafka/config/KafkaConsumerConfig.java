@@ -95,7 +95,7 @@ public class KafkaConsumerConfig {
      *
      * @return
      */
-   /* @Bean("manualListenerContainerFactory")
+    @Bean("manualListenerContainerFactory")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> manualListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
@@ -109,7 +109,7 @@ public class KafkaConsumerConfig {
         //消费一次提交一次  MANUAL 表示批量提交一次
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         return factory;
-    }*/
+    }
 
     /**
      * record 模式 消费一条数据就提交
@@ -117,7 +117,7 @@ public class KafkaConsumerConfig {
      * @param consumerFactory
      * @return
      */
-/*    @Bean("recordListenerContainerFactory")
+    @Bean("recordListenerContainerFactory")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> recordListenerContainerFactory(
             ConsumerFactory<String, String> consumerFactory) {
 
@@ -129,7 +129,7 @@ public class KafkaConsumerConfig {
         //配置手动提交offset
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
         return factory;
-    }*/
+    }
 
     /**
      * TIME     当每一批poll()的数据被消费者监听器（ListenerConsumer）处理之后，距离上次提交时间大于TIME时提交
@@ -137,7 +137,7 @@ public class KafkaConsumerConfig {
      * @param consumerFactory
      * @return
      */
-/*    @Bean("timeListenerContainerFactory")
+    @Bean("timeListenerContainerFactory")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> timeListenerContainerFactory(
             ConsumerFactory<String, String> consumerFactory) {
 
@@ -150,7 +150,7 @@ public class KafkaConsumerConfig {
         //配置手动提交offset
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.TIME);
         return factory;
-    }*/
+    }
 
     /**
      * COUNT    当每一批poll()的数据被消费者监听器（ListenerConsumer）处理之后，被处理record数量大于等于COUNT时提交
@@ -158,7 +158,7 @@ public class KafkaConsumerConfig {
      * @param consumerFactory
      * @return
      */
-/*    @Bean("countListenerContainerFactory")
+    @Bean("countListenerContainerFactory")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> countListenerContainerFactory(
             ConsumerFactory<String, String> consumerFactory) {
 
@@ -171,7 +171,7 @@ public class KafkaConsumerConfig {
         //配置手动提交offset
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.COUNT);
         return factory;
-    }*/
+    }
 
 
     /**
@@ -180,7 +180,7 @@ public class KafkaConsumerConfig {
      * @param consumerFactory
      * @return
      */
- /*   @Bean("timeCountListenerContainerFactory")
+    @Bean("timeCountListenerContainerFactory")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> timeCountListenerContainerFactory(
             ConsumerFactory<String, String> consumerFactory) {
 
@@ -196,7 +196,7 @@ public class KafkaConsumerConfig {
         //配置手动提交offset
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.COUNT_TIME);
         return factory;
-    }*/
+    }
 
     /**
      * 自定义topic
