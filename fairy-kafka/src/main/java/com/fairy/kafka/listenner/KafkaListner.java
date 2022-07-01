@@ -25,8 +25,7 @@ public class KafkaListner {
      * @param records
      * @param ack
      */
-    @KafkaListener(groupId = "${kafka.consumer.group-id}", containerFactory = "kafkaListenerContainerFactory",
-            topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
+    @KafkaListener(groupId = "${kafka.consumer.group-id}", containerFactory = "kafkaListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0"})})
     public void fairyGroupTopic(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
         log.info("消费监听本次拉取数据量：{}",records.size());
         for (ConsumerRecord<String, String> record : records) {
@@ -39,7 +38,7 @@ public class KafkaListner {
     }
 
 
-    @KafkaListener(groupId = "${kafka.consumer.group-id2}", containerFactory = "kafkaListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"2", "3","4"})})
+    @KafkaListener(groupId = "${kafka.consumer.group-id2}", containerFactory = "kafkaListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"1"})})
     public void fairyGroupTopic2(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
         log.info("消费监听本次拉取数据量：{}",records.size());
         for (ConsumerRecord<String, String> record : records) {
