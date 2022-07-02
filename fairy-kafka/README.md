@@ -51,10 +51,19 @@ listener: ack-mode
 在消费数据后，还没走到ack，断开消费端 数据offset就自动提交了，下次就消费不到了 
 
 ````
+## kafka监听接口
+```
+MessageListener接口：使用MessageListener接口实现时，当消费者拉取消息之后，消费完成会自动提交offset，即enable.auto.commit为true时，适合使用此接口； 
+AcknowledgingMessageListener接口：使用AcknowledgeMessageListener时，当消费者消费一条消息之后，不会自动提交offset，需要手动ack，即enable.auto.commit为false时，适合使用此接口；
+BatchMessageListener和 BatchAcknowledgingMessageListener 接口作用与上述两个接口大体类似，只是适合批量消费消息决定是否自动提交offset。
+
+```
+
 
 ## 分支讲解
 ```
 分支 fairy/dev 原始分支
 sp1 分支  对批量消费数据提交
 sp2 分支 分析消费数据对数幂等  不重复消费 且保证数据发送下游成功
+
 ```

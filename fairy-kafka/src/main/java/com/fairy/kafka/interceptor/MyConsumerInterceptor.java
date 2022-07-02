@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * 消费数据时自定义消费拦截器  可以做消费监控 日志记录等
  * @author 鹿少年
  * @version 1.0
  * @date 2022/5/29 19:23
