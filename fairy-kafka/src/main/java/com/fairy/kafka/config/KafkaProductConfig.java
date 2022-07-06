@@ -131,8 +131,7 @@ public class KafkaProductConfig {
      *
      * @return
      */
-    @ConditionalOnMissingBean(name = "kafkaTransactionManager")
-    @Bean
+    @Bean("kafkaTransactionManager")
     public KafkaTransactionManager kafkaTransactionManager(@Qualifier("transProducerFactory")ProducerFactory producerFactory ) {
         KafkaTransactionManager<String, String> kafkaTransactionManager = new KafkaTransactionManager<>(producerFactory);
         return  kafkaTransactionManager;
