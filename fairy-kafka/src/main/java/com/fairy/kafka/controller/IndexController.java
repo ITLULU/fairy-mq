@@ -2,7 +2,7 @@ package com.fairy.kafka.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.fairy.common.response.CommonResponse;
-import com.fairy.kafka.model.dto.OrderTdo;
+import com.fairy.kafka.model.dto.OrderDto;
 import com.fairy.kafka.service.KafkaSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +38,7 @@ public class IndexController {
         headers.put(KafkaHeaders.PARTITION_ID, 1);
         headers.put(KafkaHeaders.MESSAGE_KEY, "key-1111");
         headers.put(KafkaHeaders.RECEIVED_MESSAGE_KEY, "recived-key-1111");
-        OrderTdo order =  OrderTdo.builder()
+        OrderDto order =  OrderDto.builder()
                 .orderAmount(1000.0)
                 .orderId(100)
                 .productId(111)
