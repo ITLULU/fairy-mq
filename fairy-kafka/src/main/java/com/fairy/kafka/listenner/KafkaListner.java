@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.TopicPartition;
-import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
@@ -30,14 +29,15 @@ public class KafkaListner {
     private RecordHandler recordHandler;
 
     @Autowired
-    private KafkaListenerEndpointRegistry registry;
+    private ListenerUtil listenerUtil;
 
     @Value("${consumer.listener.order}")
     private String orderListener;
     @Value("${max.retry.count}")
     private Integer retryCount;
 
-    private volatile AtomicInteger count =new AtomicInteger(0);
+    private volatile AtomicInteger count = new AtomicInteger(0);
+
     /**
      * 配置多个消费组
      * TopicPartition  定义分区 partitionOffsets
@@ -50,21 +50,19 @@ public class KafkaListner {
     public void fairyGroupTopic(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
         try {
             log.info("消费监听本次拉取数据量：{}", records.size());
-            //如果服务出现问题 这个时候应该暂停消费  不要做一些无谓的性能耗损 暂停消费
+            //如果服务出现问题 这个时候应该暂停消费  不要做一些无谓的性能耗损 暂停消费  可以通过配置的形式  启动一个定时任务 拉取配置中心
+            //人工干预解决问题后  通过修改配置  然后触发开始消费
             for (ConsumerRecord<String, String> record : records) {
                 String value = record.value();
                 log.info("消费者组fairyGroupTopic消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
             }
-            //实际开发中  消费数据这一步需要做幂等性  防止多次消费
             doFilter(records);
             //手动提交ack 移动偏移量
             ack.acknowledge();
         } catch (Throwable e) {
             log.error("consumer Listener监听消费消息异常:{}",e);
             if(count.getAndIncrement()>=retryCount){
-                MessageListenerContainer listenerContainer=registry.getListenerContainer(orderListener);
-                //暂停消费  如果处理完毕可以
-                listenerContainer.pause();
+              listenerUtil.pauseConsumer(orderListener);
             }
             throw CommonException.create(e);
         }
