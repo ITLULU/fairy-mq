@@ -1,16 +1,21 @@
 package com.fairy.kafka.listenner;
 
+import com.fairy.common.exception.CommonException;
 import com.fairy.kafka.handler.RecordHandler;
 import com.fairy.kafka.model.po.ConsumerRecordPO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.TopicPartition;
+import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
+import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author 鹿少年
@@ -24,6 +29,15 @@ public class KafkaListner {
     @Autowired
     private RecordHandler recordHandler;
 
+    @Autowired
+    private KafkaListenerEndpointRegistry registry;
+
+    @Value("${consumer.listener.order}")
+    private String orderListener;
+    @Value("${max.retry.count}")
+    private Integer retryCount;
+
+    private volatile AtomicInteger count =new AtomicInteger(0);
     /**
      * 配置多个消费组
      * TopicPartition  定义分区 partitionOffsets
@@ -32,17 +46,29 @@ public class KafkaListner {
      * @param records
      * @param ack
      */
-    @KafkaListener(id="group-listener",groupId = "${kafka.consumer.group-id}", containerFactory = "manualIMListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0","1"})})
+    @KafkaListener(id = "${consumer.listener.order}", groupId = "${kafka.consumer.group-id}", containerFactory = "manualIMListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
     public void fairyGroupTopic(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
-        log.info("消费监听本次拉取数据量：{}", records.size());
-        for (ConsumerRecord<String, String> record : records) {
-            String value = record.value();
-            log.info("消费者组fairyGroupTopic消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
+        try {
+            log.info("消费监听本次拉取数据量：{}", records.size());
+            //如果服务出现问题 这个时候应该暂停消费  不要做一些无谓的性能耗损 暂停消费
+            for (ConsumerRecord<String, String> record : records) {
+                String value = record.value();
+                log.info("消费者组fairyGroupTopic消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
+            }
+            //实际开发中  消费数据这一步需要做幂等性  防止多次消费
+            doFilter(records);
+            //手动提交ack 移动偏移量
+            ack.acknowledge();
+        } catch (Throwable e) {
+            log.error("consumer Listener监听消费消息异常:{}",e);
+            if(count.getAndIncrement()>=retryCount){
+                MessageListenerContainer listenerContainer=registry.getListenerContainer(orderListener);
+                //暂停消费  如果处理完毕可以
+                listenerContainer.pause();
+            }
+            throw CommonException.create(e);
         }
-        //实际开发中  消费数据这一步需要做幂等性  防止多次消费
-        doFilter(records);
-        //手动提交ack 移动偏移量
-        ack.acknowledge();
+
     }
 
     /**
@@ -62,6 +88,8 @@ public class KafkaListner {
             }
 
         }
+        //模拟异常 没有走到手动ack提交偏移量
+//        int i = 1 / 0;
     }
 
 }
