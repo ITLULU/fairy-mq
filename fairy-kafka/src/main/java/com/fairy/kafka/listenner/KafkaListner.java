@@ -36,7 +36,8 @@ public class KafkaListner {
     @Value("${max.retry.count}")
     private Integer retryCount;
 
-    private volatile AtomicInteger count = new AtomicInteger(0);
+    /**volatile 可以标识多线程对该变量是共享可见的*/
+    private  AtomicInteger count = new AtomicInteger(0);
 
     /**
      * 配置多个消费组
