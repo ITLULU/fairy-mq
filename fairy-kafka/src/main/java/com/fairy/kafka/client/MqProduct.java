@@ -61,7 +61,7 @@ private final static String TOPIC_NAME = "fairy-partition-replicate";
         Producer<String, String> producer = new KafkaProducer<String, String>(props);
 
         int msgNum = 5;
-        final CountDownLatch countDownLatch = new CountDownLatch(msgNum);
+//        final CountDownLatch countDownLatch = new CountDownLatch(msgNum);
         for (int i = 1; i <= msgNum; i++) {
             Order order = new Order(i, 100 + i, 1, 1000.00);
             //指定发送分区
@@ -93,7 +93,7 @@ private final static String TOPIC_NAME = "fairy-partition-replicate";
 
         }
 
-        countDownLatch.await(5, TimeUnit.SECONDS);
+//        countDownLatch.await(5, TimeUnit.SECONDS);
         producer.close();
     }
 }
