@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 //@RocketMQTransactionListener(txProducerGroup = "springBootGroup2")
 @RocketMQTransactionListener(rocketMQTemplateBeanName = "rocketMQTemplate")
-public class MyTransactionImpl implements RocketMQLocalTransactionListener {
+public class MyRocketMqTransaction implements RocketMQLocalTransactionListener {
 
     private ConcurrentHashMap<Object, Message> localTrans = new ConcurrentHashMap<>();
 
