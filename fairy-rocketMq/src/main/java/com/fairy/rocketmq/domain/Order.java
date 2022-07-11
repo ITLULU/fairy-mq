@@ -2,6 +2,7 @@ package com.fairy.rocketmq.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @version 1.0
  * @date 2022/5/29 15:56
  */
+@NoArgsConstructor
 @Data
 @AllArgsConstructor
 public class Order implements Serializable {
