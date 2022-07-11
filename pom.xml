@@ -9,6 +9,8 @@
     <version>1.0</version>
     <modules>
         <module>fairy-kafka</module>
+        <module>fairy-rocketMq</module>
+        <module>fairy-rabbitMq</module>
     </modules>
     <packaging>pom</packaging>
     <parent>

@@ -1,0 +1,18 @@
+server:
+  port: 8081
+spring:
+  rabbitmq:
+    host: node01
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /rabbitmq
+    publisher-confirm-type: correlated
+    listener:
+      simple:
+        prefetch: 1
+        concurrency: 5
+        max-concurrency: 10
+        acknowledge-mode: manual
+        retry:
+          max-attempts:3
