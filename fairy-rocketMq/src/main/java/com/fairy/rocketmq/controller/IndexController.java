@@ -49,11 +49,9 @@ public class IndexController {
     @GetMapping("/transaction")
     public CommonResponse sendMessageInTransaction() throws InterruptedException {
         String[] tags = new String[]{"TagA", "TagB", "TagC", "TagD", "TagE"};
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             Order order = new Order();
-            order.setOrderAmount(12.0);
-            order.setOrderId(12+i);
-            order.setProductNum(12+i);
+            order.setOrderId(i);
             //尝试在Header中加入一些自定义的属性。
             Message<String> message = MessageBuilder.withPayload(JSON.toJSONString(order))
                     .setHeader(RocketMQHeaders.TRANSACTION_ID, "TransID_" + i)
@@ -66,7 +64,6 @@ public class IndexController {
             //这里发送事务消息时，还是会转换成RocketMQ的Message对象，再调用RocketMQ的API完成事务消息机制。
             SendResult sendResult = rocketMQTemplate.sendMessageInTransaction(destination, message, destination);
             log.info("事务消息发送结果:{}", sendResult);
-            Thread.sleep(10);
         }
         return CommonResponse.success();
     }
