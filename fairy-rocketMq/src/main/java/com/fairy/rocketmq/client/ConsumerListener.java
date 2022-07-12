@@ -12,18 +12,21 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * RocketMQListener接口：消费者都需实现该接口的消费方法onMessage(msg)。
+ * RocketMQPushConsumerLifecycleListener接口：当@RocketMQMessageListener中的配置不足以满足我们的需求时，可以实现该接口直接更改消费者类DefaultMQPushConsumer配置
  * 监听器
+ *
  * @author hll
  */
 @Slf4j
 @Component
 @RocketMQMessageListener(consumerGroup = "${rocketmq.consumer.group2}", topic = "${rocketmq.consumer.topic}", consumeMode = ConsumeMode.CONCURRENTLY)
-public class ConsumerListener implements RocketMQListener<String> , RocketMQPushConsumerLifecycleListener {
+public class ConsumerListener implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
     @Override
     public void onMessage(String message) {
         log.info("Received message : " + message);
         //模拟异常场景
-        int i= 1/0;
+//        int i= 1/0;
     }
 
     @Override

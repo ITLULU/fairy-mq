@@ -11,6 +11,8 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
+
 /**
  * @author 鹿少年
  * @version 1.0
@@ -29,33 +31,44 @@ public class MqSenderImpl implements MqSender {
 
     @Override
     public void sendMessage(String topic, String msg) {
-        this.rocketMQTemplate.convertAndSend(topic, msg);
+        SendResult sendResult = this.rocketMQTemplate.syncSend(topic, msg);
+        SendResult sendResult1 = this.rocketMQTemplate.sendAndReceive(topic,
+                msg,
+                new Type() {
+                    @Override
+                    public String getTypeName() {
+                        return "type";
+                    }
+                });
+        log.info("事务消息发送结果:{}", sendResult);
+
     }
 
     @Override
-    public void sendMessageInTransaction(String topic, String msg)  {
+    public void sendMessageInTransaction(String topic, String msg) {
         String[] tags = new String[]{"TagA", "TagB", "TagC", "TagD", "TagE"};
         for (int i = 0; i < 10; i++) {
             Message<String> message = MessageBuilder.withPayload(msg).build();
             String destination = topic + ":" + tags[i % tags.length];
             SendResult sendResult = rocketMQTemplate.sendMessageInTransaction(destination, message, destination);
-           log.info("发送消息结果：{}", sendResult);
+            log.info("发送消息结果：{}", sendResult);
         }
     }
+
     @Override
-    public void sendAsynMessag(String topic,String tag, String msg) {
+    public void sendAsynMessag(String topic, String tag, String msg) {
         String destination = topic + ":" + tag;
         Message message = MessageBuilder.withPayload(msg).build();
-        rocketMQTemplate.sendAndReceive(destination,message,new RocketMQLocalRequestCallback(){
+        rocketMQTemplate.sendAndReceive(destination, message, new RocketMQLocalRequestCallback() {
 
             @Override
             public void onSuccess(Object o) {
-            log.info("----消息：{}发送成功",o);
+                log.info("----消息：{}发送成功", o);
             }
 
             @Override
             public void onException(Throwable throwable) {
-                log.info("----消息发送失败:{}",throwable);
+                log.info("----消息发送失败:{}", throwable);
 
             }
         });
@@ -65,7 +78,7 @@ public class MqSenderImpl implements MqSender {
     public void syncSendOrderly(String topic, String tag, String msg) {
         String destination = topic + ":" + tag;
         Message message = MessageBuilder.withPayload(msg).build();
-        rocketMQTemplate.sendOneWayOrderly(destination, message,"key");
+        rocketMQTemplate.sendOneWayOrderly(destination, message, "key");
     }
 
     @Override

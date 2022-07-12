@@ -1,6 +1,10 @@
 package com.fairy.rocketmq.listener;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fairy.common.utils.DateUtil;
+import com.fairy.rocketmq.domain.RocketMqLog;
+import com.fairy.rocketmq.mapper.RocketMqLogMapper;
+import com.fairy.rocketmq.service.RocketMqLogService;
 import com.google.common.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +17,7 @@ import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.converter.StringMessageConverter;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +29,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * 但是到了2.1.1版本，只能指定rocketMQTemplateBeanMame，也就是说如果你有多个发送者组需要有不同的事务消息逻辑，
  * 那就需要定义多个RocketMQTemplate。
  * 而且这个版本中，虽然重现了我们在原生API中的事务消息逻辑，但是测试过程中还是发现一些奇怪的特性，用的时候要注意点。
+ *
+ * @RocketMQTransactionListener：配合RocketMQLocalTransactionListener接口一起使用，
+ *
+ * 2、配置文件
  **/
 @Slf4j
 //@RocketMQTransactionListener(txProducerGroup = "springBootGroup2")
@@ -35,8 +44,11 @@ public class RocketMqTransactionListener implements RocketMQLocalTransactionList
      */
     @Autowired
     private Cache<String,String> cache;
+    @Autowired
+    private RocketMqLogService mqLogService;
     /**
-     * 执行本地事务
+     * 执行本地事务  在消息被消费之前执行本地的事务操作 只有本地事务提交后发送到MQ中的事物消息才对Consumer可见
+     * 否则如果本地事务执行失败，那么消息队列中的消息也会回滚
      * @param msg 消息
      * @param arg 参数
      * @return RocketMQLocalTransactionState
@@ -44,52 +56,50 @@ public class RocketMqTransactionListener implements RocketMQLocalTransactionList
     @Override
     public RocketMQLocalTransactionState executeLocalTransaction(Message msg, Object arg) {
         //事务Id
-        Object transId = msg.getHeaders().get(RocketMQHeaders.PREFIX + RocketMQHeaders.TRANSACTION_ID);
+        String transId = msg.getHeaders().get(RocketMQHeaders.PREFIX + RocketMQHeaders.TRANSACTION_ID).toString();
+        log.info("执行本地事务,事务ID:{}",transId);
+
+        Integer orderId = Integer.valueOf(msg.getHeaders().get("orderId").toString());
+        String  topic = msg.getHeaders().get((RocketMQHeaders.TOPIC)).toString();
+        Date date = new Date(msg.getHeaders().getTimestamp());
+
         //目的地  String destination = TOPIC_NAME + ":" + tags[i % tags.length]; arg 发送时传递参数
         String destination = arg.toString();
         cache.put(String.valueOf(transId), msg.toString());
 
         //转成RocketMQ的Message对象
         org.apache.rocketmq.common.message.Message message = RocketMQUtil.convertToRocketMessage(new StringMessageConverter(), "UTF-8", destination, msg);
-        String tags = message.getTags();
         //这个msg的实现类是GenericMessage，里面实现了toString方法
         //在Header中自定义的RocketMQHeaders.TAGS属性，到这里就没了。但是RocketMQHeaders.TRANSACTION_ID这个属性就还在。
         //而message的Header里面会默认保存RocketMQHeaders里的属性，但是都会加上一个RocketMQHeaders.PREFIX前缀
-//        log.info("executeLocalTransaction msg :{},destination:{},tags:{}" , msg,destination,tags);
-        log.info("executeLocalTransaction destination:{},tags:{}" ,destination,tags);
+        log.info("executeLocalTransaction destination:{},orderId:{},date:{}" ,destination,orderId,DateUtil.parseDate(date,DateUtil.format));
+       try{
+           mqLogService.inserMqLog(transId, topic,destination);
+           //模拟异常
+//           int i=1/0;
+           return RocketMQLocalTransactionState.COMMIT;
+       }catch (Exception e){
+           log.error("异常结果：{}",e);
+           return RocketMQLocalTransactionState.ROLLBACK;
+       }
 
-        if (StringUtils.contains(tags, "TagA")) {
-            return RocketMQLocalTransactionState.COMMIT;
-        } else if (StringUtils.contains(tags, "TagB")) {
-            return RocketMQLocalTransactionState.ROLLBACK;
-        } else {
-            return RocketMQLocalTransactionState.UNKNOWN;
-        }
     }
 
     /**
      * 本地事务的检查接口,即MQServer没有收到二次确认消息时调用的方法 去检查本地事务到底有没有成功
+     * 如果超过一定时间还本地事务还没有提交，就会调用checkLocalTransaction执行本地事务回查。
      * @param msg 消息
      * @return RocketMQLocalTransactionState
      */
     @Override
     public RocketMQLocalTransactionState checkLocalTransaction(Message msg) {
-        String transId = msg.getHeaders().get(RocketMQHeaders.PREFIX + RocketMQHeaders.TRANSACTION_ID).toString();
-        String originalMessage = cache.getIfPresent(transId);
-        Date date = new Date(msg.getHeaders().getTimestamp());
-        //这里能够获取到自定义的transaction_id属性
-//        log.info("checkLocalTransaction 发送时间：{} originalMessage:{},  msg ={}",DateUtil.parseDate(date,DateUtil.format), originalMessage,msg);
-        //获取标签时，自定义的RocketMQHeaders.TAGS拿不到，但是框架会封装成一个带RocketMQHeaders.PREFIX的属性
-        String tags1 = msg.getHeaders().get(RocketMQHeaders.TAGS).toString();
-        String MyProp = msg.getHeaders().get("MyProp").toString();
-        String tags = msg.getHeaders().get(RocketMQHeaders.PREFIX + RocketMQHeaders.TAGS).toString();
-        log.info("checkLocalTransaction  tage:{},tags1:{},MyProp:{}",tags,tags1,MyProp);
-        if (StringUtils.contains(tags, "TagA")) {
+        String transactionId = msg.getHeaders().get(RocketMQHeaders.PREFIX + RocketMQHeaders.TRANSACTION_ID).toString();
+        log.info("检查本地事务,事务ID:{}",transactionId);
+        //根据事务id从日志表检索 回查 既然Mq事务提交成功
+        RocketMqLog rocketMqLog = mqLogService.selectOne(transactionId);
+        if(null != rocketMqLog){
             return RocketMQLocalTransactionState.COMMIT;
-        } else if (StringUtils.contains(tags, "TagB")) {
-            return RocketMQLocalTransactionState.ROLLBACK;
-        } else {
-            return RocketMQLocalTransactionState.UNKNOWN;
         }
+        return RocketMQLocalTransactionState.ROLLBACK;
     }
 }
