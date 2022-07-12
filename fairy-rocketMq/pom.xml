@@ -49,12 +49,6 @@
             <groupId>com.fairy</groupId>
             <artifactId>fairy-common</artifactId>
             <version>1.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 

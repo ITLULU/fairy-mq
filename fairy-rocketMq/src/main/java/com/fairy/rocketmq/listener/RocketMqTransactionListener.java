@@ -1,6 +1,7 @@
-package com.fairy.rocketmq.config;
+package com.fairy.rocketmq.listener;
 
 import com.fairy.common.utils.DateUtil;
+import com.google.common.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.spring.annotation.RocketMQTransactionListener;
@@ -8,6 +9,8 @@ import org.apache.rocketmq.spring.core.RocketMQLocalTransactionListener;
 import org.apache.rocketmq.spring.core.RocketMQLocalTransactionState;
 import org.apache.rocketmq.spring.support.RocketMQHeaders;
 import org.apache.rocketmq.spring.support.RocketMQUtil;
+import org.checkerframework.checker.units.qual.A;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.converter.StringMessageConverter;
 
@@ -25,10 +28,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 //@RocketMQTransactionListener(txProducerGroup = "springBootGroup2")
 @RocketMQTransactionListener(rocketMQTemplateBeanName = "rocketMQTemplate")
-public class MyRocketMqTransaction implements RocketMQLocalTransactionListener {
+public class RocketMqTransactionListener implements RocketMQLocalTransactionListener {
 
-    private ConcurrentHashMap<Object, Message> localTrans = new ConcurrentHashMap<>();
-
+    /**
+     * 可以作个guava内置缓存
+     */
+    @Autowired
+    private Cache<String,String> cache;
     /**
      * 执行本地事务
      * @param msg 消息
@@ -41,7 +47,7 @@ public class MyRocketMqTransaction implements RocketMQLocalTransactionListener {
         Object transId = msg.getHeaders().get(RocketMQHeaders.PREFIX + RocketMQHeaders.TRANSACTION_ID);
         //目的地  String destination = TOPIC_NAME + ":" + tags[i % tags.length]; arg 发送时传递参数
         String destination = arg.toString();
-        localTrans.put(transId, msg);
+        cache.put(String.valueOf(transId), msg.toString());
 
         //转成RocketMQ的Message对象
         org.apache.rocketmq.common.message.Message message = RocketMQUtil.convertToRocketMessage(new StringMessageConverter(), "UTF-8", destination, msg);
@@ -49,7 +55,8 @@ public class MyRocketMqTransaction implements RocketMQLocalTransactionListener {
         //这个msg的实现类是GenericMessage，里面实现了toString方法
         //在Header中自定义的RocketMQHeaders.TAGS属性，到这里就没了。但是RocketMQHeaders.TRANSACTION_ID这个属性就还在。
         //而message的Header里面会默认保存RocketMQHeaders里的属性，但是都会加上一个RocketMQHeaders.PREFIX前缀
-        log.info("executeLocalTransaction msg :{},destination:{},tags:{}" , msg,destination,tags);
+//        log.info("executeLocalTransaction msg :{},destination:{},tags:{}" , msg,destination,tags);
+        log.info("executeLocalTransaction destination:{},tags:{}" ,destination,tags);
 
         if (StringUtils.contains(tags, "TagA")) {
             return RocketMQLocalTransactionState.COMMIT;
@@ -68,7 +75,7 @@ public class MyRocketMqTransaction implements RocketMQLocalTransactionListener {
     @Override
     public RocketMQLocalTransactionState checkLocalTransaction(Message msg) {
         String transId = msg.getHeaders().get(RocketMQHeaders.PREFIX + RocketMQHeaders.TRANSACTION_ID).toString();
-        Message originalMessage = localTrans.get(transId);
+        String originalMessage = cache.getIfPresent(transId);
         Date date = new Date(msg.getHeaders().getTimestamp());
         //这里能够获取到自定义的transaction_id属性
 //        log.info("checkLocalTransaction 发送时间：{} originalMessage:{},  msg ={}",DateUtil.parseDate(date,DateUtil.format), originalMessage,msg);
@@ -76,10 +83,10 @@ public class MyRocketMqTransaction implements RocketMQLocalTransactionListener {
         String tags1 = msg.getHeaders().get(RocketMQHeaders.TAGS).toString();
         String MyProp = msg.getHeaders().get("MyProp").toString();
         String tags = msg.getHeaders().get(RocketMQHeaders.PREFIX + RocketMQHeaders.TAGS).toString();
-        log.info("tage:{},tags1:{},MyProp:{}",tags,tags1,MyProp);
-        if (StringUtils.contains(tags, "TagC")) {
+        log.info("checkLocalTransaction  tage:{},tags1:{},MyProp:{}",tags,tags1,MyProp);
+        if (StringUtils.contains(tags, "TagA")) {
             return RocketMQLocalTransactionState.COMMIT;
-        } else if (StringUtils.contains(tags, "TagD")) {
+        } else if (StringUtils.contains(tags, "TagB")) {
             return RocketMQLocalTransactionState.ROLLBACK;
         } else {
             return RocketMQLocalTransactionState.UNKNOWN;

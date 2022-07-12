@@ -46,10 +46,34 @@ public class IndexController {
 
     }
 
+    @GetMapping("/sendone")
+    public CommonResponse sendone() {
+
+        String[] tags = new String[]{"TagA", "TagB", "TagC", "TagD", "TagE"};
+        for (int i = 0; i < 2; i++) {
+            Order order = new Order();
+            order.setOrderId(i);
+            //尝试在Header中加入一些自定义的属性。
+            Message<String> message = MessageBuilder.withPayload(JSON.toJSONString(order))
+                    .setHeader(RocketMQHeaders.TRANSACTION_ID, "TransID_" + i)
+                    //发到事务监听器里后，这个自己设定的TAGS属性会丢失。但是上面那个属性不会丢失。
+                    .setHeader(RocketMQHeaders.TAGS, tags[i % tags.length])
+                    //MyProp在事务监听器里也能拿到，为什么就单单这个RocketMQHeaders.TAGS拿不到？这只能去调源码了。
+                    .setHeader("MyProp", "MyProp_" + i)
+                    .build();
+            String destination = TOPIC_NAME + ":" + tags[i % tags.length];
+            //这里发送事务消息时，还是会转换成RocketMQ的Message对象，再调用RocketMQ的API完成事务消息机制。
+            rocketMQTemplate.syncSend(destination, message);
+        }
+        return CommonResponse.success();
+
+    }
+
+
     @GetMapping("/transaction")
     public CommonResponse sendMessageInTransaction() throws InterruptedException {
         String[] tags = new String[]{"TagA", "TagB", "TagC", "TagD", "TagE"};
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 2; i++) {
             Order order = new Order();
             order.setOrderId(i);
             //尝试在Header中加入一些自定义的属性。
