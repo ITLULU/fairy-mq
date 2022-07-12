@@ -77,7 +77,7 @@ public class RocketMqTransactionListener implements RocketMQLocalTransactionList
            mqLogService.inserMqLog(transId, topic,destination);
            //模拟异常
 //           int i=1/0;
-           return RocketMQLocalTransactionState.COMMIT;
+           return RocketMQLocalTransactionState.UNKNOWN;
        }catch (Exception e){
            log.error("异常结果：{}",e);
            return RocketMQLocalTransactionState.ROLLBACK;
