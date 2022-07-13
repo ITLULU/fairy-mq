@@ -30,46 +30,55 @@ public class TransactionListenerImpl implements TransactionListener {
 
     private ConcurrentHashMap<String, Integer> localTrans = new ConcurrentHashMap<>();
 
+    /**
+     * 执行本地事务
+     */
     @Override
     public LocalTransactionState executeLocalTransaction(Message msg, Object arg) {
-//        int value = transactionIndex.getAndIncrement();
-//        int status = value % 3;
-//        localTrans.put(msg.getTransactionId(), status);
-//        return LocalTransactionState.UNKNOW;
+        int value = transactionIndex.getAndIncrement();
+        // 设置不同的本地事务状态
+        int status = value % 3;
+        localTrans.put(msg.getTransactionId(), status);
+        return LocalTransactionState.UNKNOW;
 
-        String tags = msg.getTags();
+       /* String tags = msg.getTags();
         if(StringUtils.contains(tags,"TagA")){
             return LocalTransactionState.COMMIT_MESSAGE;
         }else if(StringUtils.contains(tags,"TagB")){
             return LocalTransactionState.ROLLBACK_MESSAGE;
         }else{
             return LocalTransactionState.UNKNOW;
-        }
+        }*/
     }
 
+    /**
+     * 事务回查方法
+     *
+     * @return 返回本地事务的状态
+     */
     @Override
     public LocalTransactionState checkLocalTransaction(MessageExt msg) {
-//        Integer status = localTrans.get(msg.getTransactionId());
-//        if (null != status) {
-//            switch (status) {
-//                case 0:
-//                    return LocalTransactionState.UNKNOW;
-//                case 1:
-//                    return LocalTransactionState.COMMIT_MESSAGE;
-//                case 2:
-//                    return LocalTransactionState.ROLLBACK_MESSAGE;
-//                default:
-//                    return LocalTransactionState.COMMIT_MESSAGE;
-//            }
-//        }
-//        return LocalTransactionState.COMMIT_MESSAGE;
-        String tags = msg.getTags();
+        Integer status = localTrans.get(msg.getTransactionId());
+        if (null != status) {
+            switch (status) {
+                case 0:
+                    return LocalTransactionState.UNKNOW;
+                case 1:
+                    return LocalTransactionState.COMMIT_MESSAGE;
+                case 2:
+                    return LocalTransactionState.ROLLBACK_MESSAGE;
+                default:
+                    return LocalTransactionState.COMMIT_MESSAGE;
+            }
+        }
+        return LocalTransactionState.COMMIT_MESSAGE;
+      /*  String tags = msg.getTags();
         if(StringUtils.contains(tags,"TagC")){
             return LocalTransactionState.COMMIT_MESSAGE;
         }else if(StringUtils.contains(tags,"TagD")){
             return LocalTransactionState.ROLLBACK_MESSAGE;
         }else{
             return LocalTransactionState.UNKNOW;
-        }
+        }*/
     }
 }

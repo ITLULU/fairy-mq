@@ -20,6 +20,7 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.client.producer.TransactionListener;
 import org.apache.rocketmq.client.producer.TransactionMQProducer;
+import org.apache.rocketmq.client.producer.TransactionSendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 
@@ -29,8 +30,10 @@ import java.util.concurrent.*;
 public class TransactionProducer {
     public static void main(String[] args) throws MQClientException, InterruptedException {
         TransactionListener transactionListener = new TransactionListenerImpl();
+        // 构造事务消息的生产者
         TransactionMQProducer producer = new TransactionMQProducer("producer-group");
         producer.setNamesrvAddr("node01:9876");
+        producer.setVipChannelEnabled(true);
         ExecutorService executorService = new ThreadPoolExecutor(2, 5, 100, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(2000), new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -39,17 +42,19 @@ public class TransactionProducer {
                 return thread;
             }
         });
-
+        // 设置执行器
         producer.setExecutorService(executorService);
+        // 设置事务决断处理类
         producer.setTransactionListener(transactionListener);
         producer.start();
 
-        String[] tags = new String[] {"TagA", "TagB", "TagC", "TagD", "TagE"};
+        String[] tags = new String[]{"TagA", "TagB", "TagC", "TagD", "TagE"};
+        //模拟发送十条事务消息
         for (int i = 0; i < 10; i++) {
             try {
                 Message msg = new Message("TopicTest", tags[i % tags.length], "KEY" + i, ("Hello RocketMQ " + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
-//                msg.putUserProperty("CHECK_IMMUNITY_TIME_IN_SECONDS","10000");
-                SendResult sendResult = producer.sendMessageInTransaction(msg, null);
+                //发送事务消息
+                TransactionSendResult sendResult = producer.sendMessageInTransaction(msg, "Hello RocketMQ " + i);
                 System.out.printf("%s%n", sendResult);
 
                 Thread.sleep(10);
