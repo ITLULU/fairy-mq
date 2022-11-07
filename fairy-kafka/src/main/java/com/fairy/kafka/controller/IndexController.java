@@ -27,7 +27,7 @@ public class IndexController {
 
     @Autowired
     private KafkaSender kafkaSender;
-    @Value("${kafka.consumer.topic}")
+    @Value("${kafka.mq.topics[0].name}")
     private String TOPIC_NAME;
 
     @GetMapping("/send")

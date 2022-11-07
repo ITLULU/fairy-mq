@@ -47,7 +47,7 @@ public class KafkaListner {
      * @param records
      * @param ack
      */
-    @KafkaListener(id = "${consumer.listener.order}", groupId = "${kafka.consumer.group-id}", containerFactory = "manualIMListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
+    @KafkaListener(id = "${consumer.listener.order}", groupId = "${kafka.consumer.group-id}", containerFactory = "manualIMListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.mq.topics[0].name}", partitions = {"0", "1"})})
     public void fairyGroupTopic(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
         try {
             log.info("消费监听本次拉取数据量：{}", records.size());

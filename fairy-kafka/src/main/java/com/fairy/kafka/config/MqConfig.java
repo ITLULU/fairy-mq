@@ -1,12 +1,20 @@
 package com.fairy.kafka.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.Consumer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.listener.ConsumerAwareListenerErrorHandler;
 import org.springframework.kafka.listener.ListenerExecutionFailedException;
 import org.springframework.messaging.Message;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author 鹿少年
@@ -18,6 +26,7 @@ import org.springframework.messaging.Message;
 public class MqConfig {
     /**
      * 消费异常处理器
+     *
      * @return
      */
     @Bean
@@ -31,4 +40,29 @@ public class MqConfig {
             }
         };
     }
+
+    @Value("${kafka.consumer.bootstrap-servers}")
+    private String bootstrapServers;
+    /**
+     * 创建一个kafka管理类，相当于rabbitMQ的管理类rabbitAdmin,没有此bean无法自定义的使用adminClient创建topic
+     * @return
+     */
+    @Bean
+    public KafkaAdmin kafkaAdmin() {
+        Map<String, Object> props = new HashMap<>();
+        //配置Kafka实例的连接地址
+        props.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServers);
+        KafkaAdmin admin = new KafkaAdmin(props);
+        return admin;
+    }
+
+    /**
+     * kafka客户端，在spring中创建这个bean之后可以注入并且创建topic
+     * @return
+     */
+    @Bean
+    public AdminClient adminClient() {
+        return AdminClient.create(kafkaAdmin().getConfig());
+    }
+
 }
