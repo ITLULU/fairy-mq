@@ -1,4 +1,4 @@
-package com.fairy.rocketmq.client;
+package com.fairy.rocketmq.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
