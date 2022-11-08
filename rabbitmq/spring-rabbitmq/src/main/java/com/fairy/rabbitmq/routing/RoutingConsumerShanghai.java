@@ -20,10 +20,10 @@ public class RoutingConsumerShanghai {
         channel.queueDeclare(RabbitConstant.QUEUE_Routing_Shanghai, true, false, false, null);
 
         //指定队列与交换机以及routing key之间的关系
-//        channel.queueBind(RabbitConstant.QUEUE_Routing_Shanghai, RabbitConstant.EXCHANGE_ROUTING_Topic, "us.cal.lsj.20201127");
-//        channel.queueBind(RabbitConstant.QUEUE_Routing_Shanghai, RabbitConstant.EXCHANGE_ROUTING_Topic, "china.hubei.wuhan.20201127");
-//        channel.queueBind(RabbitConstant.QUEUE_Routing_Shanghai, RabbitConstant.EXCHANGE_ROUTING_Topic, "us.cal.lsj.20201128");
-//        channel.queueBind(RabbitConstant.QUEUE_Routing_Shanghai, RabbitConstant.EXCHANGE_ROUTING_Topic, "china.henan.zhengzhou.20201128");
+        channel.queueBind(RabbitConstant.QUEUE_Routing_Shanghai, RabbitConstant.EXCHANGE_ROUTING_Topic, "us.cal.lsj.20201127");
+        channel.queueBind(RabbitConstant.QUEUE_Routing_Shanghai, RabbitConstant.EXCHANGE_ROUTING_Topic, "china.hubei.wuhan.20201127");
+        channel.queueBind(RabbitConstant.QUEUE_Routing_Shanghai, RabbitConstant.EXCHANGE_ROUTING_Topic, "us.cal.lsj.20201128");
+        channel.queueBind(RabbitConstant.QUEUE_Routing_Shanghai, RabbitConstant.EXCHANGE_ROUTING_Topic, "china.henan.zhengzhou.20201128");
 
 
 //        channel.queueBind(RabbitConstant.QUEUE_Routing_Shanghai, RabbitConstant.EXCHANGE_ROUTING_direct, "us.cal.lsj.20201127");
