@@ -10,9 +10,21 @@ public class RabbitConstant {
     public static final String QUEUE_Pubsu_Beijing = "beijing-queue";
     public static final String QUEUE_Pubsu_Shanghai = "shanghai-queue";
 
-    //direct 类型交换机
-    public static final String EXCHANGE_PUBSUB = "pubsub-exchange";
-    public static final String EXCHANGE_WEATHER_ROUTING = "weather_routing";
+    public static final String QUEUE_Routing_Shanghai = "shanghai-queue";
+    public static final String QUEUE_Routing_Beijing = "beijing-queue";
+
+    //direct 类型交换机 定向，把消息交给符合指定routing key 的队列
+    public static final String EXCHANGE_PUBSUB_Direct = "pubsub-direct-exchange";
+    //Fanout 广播，将消息交给所有绑定到交换机的队列
+    public static final String EXCHANGE_PUBSUB_Fanout = "pubsub-fanout-exchange";
+    //topic类型交换机 通配符，把消息交给符合routing pattern（路由模式） 的队列
+    public static final String EXCHANGE_ROUTING_Topic = "routing-topic-exchange";
+    //定向
+    public static final String EXCHANGE_ROUTING_direct= "routing-direct-exchange";
+    //广播
+    public static final String EXCHANGE_ROUTING_Fanout= "routing-fanout-exchange";
+
+
     public static final String EXCHANGE_WEATHER_TOPIC = "weather_topic";
 
 

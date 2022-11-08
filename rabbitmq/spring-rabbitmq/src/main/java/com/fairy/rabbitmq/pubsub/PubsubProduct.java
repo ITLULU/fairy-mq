@@ -29,7 +29,7 @@ public class PubsubProduct {
             MqMessage mqMessage = new MqMessage(System.currentTimeMillis()+"","messageA"+i,format.format(new Date()));
             String message = new Gson().toJson(mqMessage);
             //第一个参数交换机名字   其他参数和之前的一样
-            channel.basicPublish(RabbitConstant.EXCHANGE_PUBSUB,"" , null , message.getBytes());
+            channel.basicPublish(RabbitConstant.EXCHANGE_PUBSUB_Direct,"" , null , message.getBytes());
         }
         System.out.println("mq消息发送成功");
         channel.close();

@@ -23,7 +23,7 @@ public class PubsubConsumerShanghai {
 
         //queueBind用于将队列与交换机绑定
         //参数1：队列名 参数2：交互机名  参数三：路由key（暂时用不到)
-        channel.queueBind(RabbitConstant.QUEUE_Pubsu_Shanghai, RabbitConstant.EXCHANGE_PUBSUB, "");
+        channel.queueBind(RabbitConstant.QUEUE_Pubsu_Shanghai, RabbitConstant.EXCHANGE_PUBSUB_Direct, "");
         channel.basicQos(1);
         channel.basicConsume(RabbitConstant.QUEUE_Pubsu_Shanghai, false, new DefaultConsumer(channel) {
             @Override
