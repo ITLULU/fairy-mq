@@ -6,11 +6,13 @@ package com.fairy.rabbitmq;
  */
 public class RabbitConstant {
     public static final String QUEUE_Simple = "simple-queue";
-    public static final String QUEUE_SMS = "sms";
-    public static final String EXCHANGE_WEATHER = "weather";
+    public static final String QUEUE_WorkQueue = "worke-queue";
+    public static final String QUEUE_Pubsu_Beijing = "beijing-queue";
+    public static final String QUEUE_Pubsu_Shanghai = "shanghai-queue";
+
+    //direct 类型交换机
+    public static final String EXCHANGE_PUBSUB = "pubsub-exchange";
     public static final String EXCHANGE_WEATHER_ROUTING = "weather_routing";
-    public static final String QUEUE_BAIDU = "baidu";
-    public static final String QUEUE_SINA = "sina";
     public static final String EXCHANGE_WEATHER_TOPIC = "weather_topic";
 
 
