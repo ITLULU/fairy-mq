@@ -65,5 +65,9 @@ BatchMessageListener和 BatchAcknowledgingMessageListener 接口作用与上述�
 分支 fairy/dev 原始分支
 sp1 分支  对批量消费数据提交
 sp2 分支 分析消费数据对数幂等  不重复消费 且保证数据发送下游成功
+对mq的数据进行过滤 
+这里的过滤 对于不是我们需要的数据直接不进入正式处理
+封装成标准事件  只有触发规则的数据才是我们需要的数据
 
 ```
+

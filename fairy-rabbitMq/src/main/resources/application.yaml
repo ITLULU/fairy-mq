@@ -6,7 +6,7 @@ spring:
     port: 5672
     username: admin
     password: admin
-    virtual-host: /rabbitmq
+    virtual-host: /
     publisher-confirm-type: correlated
     listener:
       simple:

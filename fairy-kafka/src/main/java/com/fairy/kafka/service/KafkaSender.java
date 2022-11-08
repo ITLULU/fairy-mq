@@ -23,14 +23,14 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 public class KafkaSender {
     @Autowired
     private KafkaTemplate kafkaTemplate;
+
     @Autowired
-//    @Qualifier("transKafkaTemplate")
+    @Qualifier("transKafkaTemplate")
     private KafkaTemplate transKafkaTemplate;
 
     public void synSendMessage(Message msg) {
         try {
             kafkaTemplate.send(msg).get();
-            int i=1/0;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -39,7 +39,6 @@ public class KafkaSender {
     public void asynSendMessage(Message msg) {
         try {
             ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(msg);
-            int i =1/0;
             future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
                 @Override
                 public void onFailure(Throwable ex) {

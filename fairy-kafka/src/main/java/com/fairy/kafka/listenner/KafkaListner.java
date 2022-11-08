@@ -1,16 +1,20 @@
 package com.fairy.kafka.listenner;
 
+import com.fairy.common.exception.CommonException;
 import com.fairy.kafka.handler.RecordHandler;
 import com.fairy.kafka.model.po.ConsumerRecordPO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.TopicPartition;
+import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author 鹿少年
@@ -24,6 +28,17 @@ public class KafkaListner {
     @Autowired
     private RecordHandler recordHandler;
 
+    @Autowired
+    private ListenerUtil listenerUtil;
+
+    @Value("${consumer.listener.order}")
+    private String orderListener;
+    @Value("${max.retry.count}")
+    private Integer retryCount;
+
+    /**volatile 可以标识多线程对该变量是共享可见的*/
+    private  AtomicInteger count = new AtomicInteger(0);
+
     /**
      * 配置多个消费组
      * TopicPartition  定义分区 partitionOffsets
@@ -32,17 +47,27 @@ public class KafkaListner {
      * @param records
      * @param ack
      */
-    @KafkaListener(id="group-listener",groupId = "${kafka.consumer.group-id}", containerFactory = "manualIMListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0","1"})})
+    @KafkaListener(id = "${consumer.listener.order}", groupId = "${kafka.consumer.group-id}", containerFactory = "manualIMListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.mq.topics[0].name}", partitions = {"0", "1"})})
     public void fairyGroupTopic(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
-        log.info("消费监听本次拉取数据量：{}", records.size());
-        for (ConsumerRecord<String, String> record : records) {
-            String value = record.value();
-            log.info("消费者组fairyGroupTopic消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
+        try {
+            log.info("消费监听本次拉取数据量：{}", records.size());
+            //如果服务出现问题 这个时候应该暂停消费  不要做一些无谓的性能耗损 暂停消费  可以通过配置的形式  启动一个定时任务 拉取配置中心
+            //人工干预解决问题后  通过修改配置  然后触发开始消费
+            for (ConsumerRecord<String, String> record : records) {
+                String value = record.value();
+                log.info("消费者组fairyGroupTopic消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
+            }
+            doFilter(records);
+            //手动提交ack 移动偏移量
+            ack.acknowledge();
+        } catch (Throwable e) {
+            log.error("consumer Listener监听消费消息异常:{}",e);
+            if(count.getAndIncrement()>=retryCount){
+              listenerUtil.pauseConsumer(orderListener);
+            }
+            throw CommonException.create(e);
         }
-        //实际开发中  消费数据这一步需要做幂等性  防止多次消费
-        doFilter(records);
-        //手动提交ack 移动偏移量
-//        ack.acknowledge();
+
     }
 
     /**
@@ -62,54 +87,8 @@ public class KafkaListner {
             }
 
         }
+        //模拟异常 没有走到手动ack提交偏移量
+//        int i = 1 / 0;
     }
 
-
-    @KafkaListener(groupId = "${kafka.consumer.group-id2}", containerFactory = "manualListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
-    public void fairyGroupTopic2(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
-        log.info("消费监听本次拉取数据量：{}", records.size());
-        for (ConsumerRecord<String, String> record : records) {
-            String value = record.value();
-            log.info("消费者组fairyGroupTopic2消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
-        }
-        ack.acknowledge();
-    }
-
-    /**
-     * 一次拉取一条数据
-     *
-     * @param record
-     */
-/*    @KafkaListener(groupId = "${kafka.consumer.group-id3}", containerFactory = "recordListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
-    public void fairyGroupTopic3(ConsumerRecord<String, String> record) {
-        String value = record.value();
-        log.info("消费者组fairyGroupTopic3消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
-    }*/
- /*   @KafkaListener(groupId = "${kafka.consumer.group-id4}", containerFactory = "timeListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
-    public void fairyGroupTopic4(List<ConsumerRecord<String, String>> records) {
-        log.info("消费监听本次拉取数据量：{}", records.size());
-        for (ConsumerRecord<String, String> record : records) {
-            String value = record.value();
-            log.info("消费者组fairyGroupTopic4消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
-        }
-    }*/
-
-/*    @KafkaListener(groupId = "${kafka.consumer.group-id5}", containerFactory = "countListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
-    public void fairyGroupTopic5(List<ConsumerRecord<String, String>> records) {
-        log.info("消费监听本次拉取数据量：{}", records.size());
-        for (ConsumerRecord<String, String> record : records) {
-            String value = record.value();
-            log.info("消费者组fairyGroupTopic5消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
-        }
-    }*/
-
-
-/*    @KafkaListener(groupId = "${kafka.consumer.group-id6}", containerFactory = "timeCountListenerContainerFactory", topicPartitions = {@TopicPartition(topic = "${kafka.consumer.topic}", partitions = {"0", "1"})})
-    public void fairyGroupTopic6(List<ConsumerRecord<String, String>> records) {
-        log.info("消费监听本次拉取数据量：{}", records.size());
-        for (ConsumerRecord<String, String> record : records) {
-            String value = record.value();
-            log.info("消费者组fairyGroupTopic6消费 topic 分区0,1数据：{},topic:{},partition:{},offset:{}", value, record.topic(), record.partition(), record.offset());
-        }
-    }*/
 }

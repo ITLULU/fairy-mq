@@ -1,20 +1,20 @@
-package com.fairy.rocketmq.domain;
+package com.fairy.kafka.model.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 /**
- * @author 鹿少年
+ * @author hll
  * @version 1.0
- * @date 2022/5/29 15:56
+ * @date 2022/7/6 14:36
  */
-@NoArgsConstructor
-@Data
 @AllArgsConstructor
-public class Order implements Serializable {
+@Builder
+@Data
+public class OrderDto implements Serializable {
     private Integer orderId;
     private Integer productId;
     private Integer productNum;
