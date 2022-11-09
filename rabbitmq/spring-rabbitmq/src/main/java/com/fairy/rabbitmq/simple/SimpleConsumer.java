@@ -53,9 +53,9 @@ class  Reciver extends DefaultConsumer {
     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
 
         String message = new String(body);
-        System.out.println(String.format("消费者接收到的消息：%s, 交互机:%s, routingkey:%s ,消息的TagId：%s",message,
+        System.out.println(String.format("消费者接收到的消息：%s, 交互机:%s, routingkey:%s ,消息的TagId：%s, consumerTag:%s",message,
                 envelope.getExchange(),
-                envelope.getRoutingKey(),envelope.getDeliveryTag()));
+                envelope.getRoutingKey(),envelope.getDeliveryTag(),consumerTag));
 
         //false只确认签收当前的消息，设置为true的时候则代表签收该消费者所有未签收的消息
         channel.basicAck(envelope.getDeliveryTag(), false);

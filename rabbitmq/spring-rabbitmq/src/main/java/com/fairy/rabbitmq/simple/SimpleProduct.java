@@ -2,9 +2,7 @@ package com.fairy.rabbitmq.simple;
 
 import com.fairy.rabbitmq.RabbitConstant;
 import com.fairy.rabbitmq.RabbitmqUtils;
-import com.rabbitmq.client.BuiltinExchangeType;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.*;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -38,6 +36,7 @@ public class SimpleProduct {
         //额外的设置属性
         //最后一个参数是要传递的消息字节数组
         channel.basicPublish("", RabbitConstant.QUEUE_Simple, null,message.getBytes());
+
         channel.close();
         conn.close();
         System.out.println("===发送成功===");
