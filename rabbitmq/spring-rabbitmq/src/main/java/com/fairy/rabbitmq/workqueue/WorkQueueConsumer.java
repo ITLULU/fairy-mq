@@ -36,5 +36,18 @@ public class WorkQueueConsumer {
                 channel.basicAck(envelope.getDeliveryTag(), false);
             }
         });
+
+        channel.basicConsume(RabbitConstant.QUEUE_WorkQueue, new DeliverCallback() {
+            @Override
+            public void handle(String consumerTag, Delivery delivery) throws IOException {
+                String mqMessage = new String(delivery.getBody(), "UTF-8" );
+                System.out.println("mq-消息接收成功:" + mqMessage);
+            }
+        }, new CancelCallback() {
+            @Override
+            public void handle(String consumerTag) throws IOException {
+                System.out.println("mq-消息取消接收消息:" + consumerTag);
+            }
+        });
     }
 }

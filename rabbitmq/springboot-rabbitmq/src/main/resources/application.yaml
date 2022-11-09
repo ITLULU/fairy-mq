@@ -1,13 +1,10 @@
-server:
-  port: 8081
 spring:
   rabbitmq:
     host: node01
     port: 5672
     username: admin
     password: admin
-    virtual-host: /
-    publisher-confirm-type: correlated
+    virtual-host:
     listener:
       simple:
         prefetch: 1
@@ -16,3 +13,8 @@ spring:
         acknowledge-mode: manual
         retry:
           max-attempts:3
+    # 以及被遗弃 发布者消息确认 代替的是publisher-confirm-type
+#    publisher-confirms: true
+    publisher-confirm-type: correlated
+    publisher-returns: true
+
