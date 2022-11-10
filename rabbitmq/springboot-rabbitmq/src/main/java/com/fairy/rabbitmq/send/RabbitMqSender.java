@@ -24,6 +24,14 @@ public class RabbitMqSender {
     public void testHelloWorld(){
         //2.发送消息
 
-        rabbitTemplate.convertAndSend("spring_queue","hello world spring....");
+    }
+
+    /**
+     * 发送消息
+     * @param queue
+     * @param message
+     */
+    public void sendMessge(String queue, String message) {
+        rabbitTemplate.convertAndSend(queue,message);
     }
 }

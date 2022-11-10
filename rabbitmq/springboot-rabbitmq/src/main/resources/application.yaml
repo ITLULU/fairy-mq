@@ -12,7 +12,13 @@ spring:
         max-concurrency: 10
         acknowledge-mode: manual
         retry:
-          max-attempts:3
+          multiplier: 1
+          max-attempts: 3
+      direct:
+        retry:
+          enabled: true
+          max-attempts: 3
+
     # 以及被遗弃 发布者消息确认 代替的是publisher-confirm-type
 #    publisher-confirms: true
     publisher-confirm-type: correlated
