@@ -10,6 +10,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author 鹿少年
@@ -48,11 +49,18 @@ public class DirectReceiver {
 
     //直连模式的多个消费者，会分到其中一个消费者进行消费。类似task模式
     //通过注入RabbitContainerFactory对象，来设置一些属性，相当于task里的channel.basicQos
+//    @RabbitListener(queues= RabbitConstant.QUEUE_Simple,containerFactory="myListenerFactory")
+//    public void simpelHelloWorldReceive1(Message message, Channel channel, String messageStr) throws IOException {
+//        System.out.println("simpelHelloWorldReceive1 received message : " +messageStr);
+//        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+//    }
+
     @RabbitListener(queues= RabbitConstant.QUEUE_Simple,containerFactory="myListenerFactory")
-    public void simpelHelloWorldReceive1(Message message, Channel channel, String messageStr) throws IOException {
-        System.out.println("simpelHelloWorldReceive1 received message : " +messageStr);
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+    public void simpelHelloWorldReceive1(List<Message> messageList, Channel channel) throws IOException {
+        for (Message message :messageList){
+            System.out.println("simpelHelloWorldReceive1 received message : " +new String(message.getBody(),"utf-8"));
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        }
+
     }
-
-
 }

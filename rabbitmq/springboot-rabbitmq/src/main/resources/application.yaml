@@ -24,3 +24,14 @@ spring:
     publisher-confirm-type: correlated
     publisher-returns: true
 
+rabbbitmq:
+  queue:
+    routing:
+      beijing: beijing-queue
+      shanghai: shanghai-queue
+    topic:
+      beijing: beijing-queue
+      shanghai: shanghai-queue
+  exchange:
+    routing: routing-topic-exchange
+    topic: topic-topic-exchange
