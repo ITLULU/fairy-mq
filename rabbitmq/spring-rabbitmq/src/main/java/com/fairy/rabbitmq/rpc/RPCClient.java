@@ -62,6 +62,7 @@ public class RPCClient implements AutoCloseable {
                 channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
             }
         }, consumerTag -> {
+            System.out.printf("consumerTag:"+consumerTag);
         });
 
         String result = response.get();

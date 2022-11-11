@@ -28,7 +28,11 @@ public class RabbitConstant {
     //广播
     public static final String EXCHANGE_ROUTING_Fanout= "routing-fanout-exchange";
 
-
+    //header模式
+    public static final String EXCHANGE_HEADER = "headerExchange";
+    public static final String QUEUE_Header_TXTYP1 = "txTyp1";
+    public static final String QUEUE_Header_BUSTYP1 = "busTyp1";
+    public static final String QUEUE_Header_TXBUSTYP1 = "txbusTyp1";
     public static final String EXCHANGE_Topic_Topic= "topic-topic-exchange";
 
     public static final String host = "node01";

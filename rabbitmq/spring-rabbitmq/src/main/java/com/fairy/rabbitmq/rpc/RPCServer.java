@@ -39,6 +39,7 @@ public class RPCServer {
                     .correlationId(delivery.getProperties().getCorrelationId())
                     .build();
 
+            System.out.printf("deliverTag:"+delivery.getEnvelope().getDeliveryTag()+ " consumerTag:"+consumerTag+" delivery"+delivery);
             String response = "";
             try {
                 String message = new String(delivery.getBody(), "UTF-8");
@@ -56,7 +57,7 @@ public class RPCServer {
         };
 
         channel.basicConsume(RabbitConstant.QUEUE_RPC, false, deliverCallback, (consumerTag -> {
-            System.out.println("取消消费的消息"+consumerTag);
+            System.out.println("接受到消息"+consumerTag);
         }));
     }
 }
