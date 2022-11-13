@@ -40,11 +40,11 @@ public class RoutingReciver {
                             value = "${rabbitmq.exchange.routing}",
                             durable = "true",
                             type = ExchangeTypes.TOPIC),
-                    key = "china.#")}, concurrency = "3", exclusive = false, id = "autoStart")
+                    key = "china.#")}, id = "autoStart")
     public void receive(Message message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
         System.out.println("路由监听接受到发送者发送的信息：" + new String(message.getBody()));
-        int i = 1 / 0;
+//        int i = 1 / 0;
         // 确认消息
-//        channel.basicAck(deliveryTag, false);
+        channel.basicAck(deliveryTag, false);
     }
 }
