@@ -18,6 +18,7 @@ import org.springframework.retry.RetryListener;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
+import org.springframework.util.ErrorHandler;
 
 /**
  * @author 鹿少年
@@ -29,9 +30,17 @@ public class MyFactoryConfig {
     @Bean(name = "myListenerFactory")
     public SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        factory.setMaxConcurrentConsumers(4);
+        factory.setMaxConcurrentConsumers(10);
         //一次拉去数量
         factory.setPrefetchCount(2);
+        factory.setConcurrentConsumers(5);
+        factory.setBatchSize(10);
+        factory.setErrorHandler(new ErrorHandler() {
+            @Override
+            public void handleError(Throwable t) {
+                System.out.println("异常消息:"+t.getMessage());
+            }
+        });
         factory.setConnectionFactory(connectionFactory);
         //配置手动确认
         factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
@@ -80,44 +89,44 @@ public class MyFactoryConfig {
         return rabbitTemplate;
     }
 
-    @Bean
-    public ConnectionFactory connectionFactory() {
-        CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-        connectionFactory.setHost("node01");
-        connectionFactory.setPort(5672);
-        connectionFactory.setUsername("admin");
-        connectionFactory.setPassword("admin");
-        //设置virtualHost。
-        connectionFactory.setVirtualHost("/");
-        //消息的确认机制（confirm）；
-        connectionFactory.setPublisherConfirms(true);
-        connectionFactory.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.CORRELATED);
-        connectionFactory.setPublisherReturns(true);
-        //setCacheMode：设置缓存模式，共有两种，CHANNEL和CONNECTION模式。
-        //1、CONNECTION模式，这个模式下允许创建多个Connection，会缓存一定数量的Connection，每个Connection中同样会缓存一些Channel，
-        // 除了可以有多个Connection，其它都跟CHANNEL模式一样。
-        //2、CHANNEL模式，程序运行期间ConnectionFactory会维护着一个Connection，
-        // 所有的操作都会使用这个Connection，但一个Connection中可以有多个Channel，
-        // 操作rabbitmq之前都必须先获取到一个Channel，
-        // 否则就会阻塞（可以通过setChannelCheckoutTimeout()设置等待时间），
-        // 这些Channel会被缓存（缓存的数量可以通过setChannelCacheSize()设置）；
-        connectionFactory.setCacheMode(CachingConnectionFactory.CacheMode.CONNECTION);   //设置CONNECTION模式，可创建多个Connection连接
-        //设置每个Connection中缓存Channel的数量，不是最大的。操作rabbitmq之前（send/receive message等）
-        // 要先获取到一个Channel.获取Channel时会先从缓存中找闲置的Channel，如果没有则创建新的Channel，
-        // 当Channel数量大于缓存数量时，多出来没法放进缓存的会被关闭。
-        connectionFactory.setChannelCacheSize(10);
-        //单位：毫秒；配合channelCacheSize不仅是缓存数量，而且是最大的数量。
-        // 从缓存获取不到可用的Channel时，不会创建新的Channel，会等待这个值设置的毫秒数
-        //同时，在CONNECTION模式，这个值也会影响获取Connection的等待时间，
-        // 超时获取不到Connection也会抛出AmqpTimeoutException异常。
-        connectionFactory.setChannelCheckoutTimeout(600);
-
-        //仅在CONNECTION模式使用，设置Connection的缓存数量。
-        connectionFactory.setConnectionCacheSize(3);
-        //setConnectionLimit：仅在CONNECTION模式使用，设置Connection的数量上限。
-        connectionFactory.setConnectionLimit(10);
-        return connectionFactory;
-    }
+//    @Bean
+//    public ConnectionFactory connectionFactory() {
+//        CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
+//        connectionFactory.setHost("node01");
+//        connectionFactory.setPort(5672);
+//        connectionFactory.setUsername("admin");
+//        connectionFactory.setPassword("admin");
+//        //设置virtualHost。
+//        connectionFactory.setVirtualHost("/");
+//        //消息的确认机制（confirm）；
+//        connectionFactory.setPublisherConfirms(true);
+//        connectionFactory.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.CORRELATED);
+//        connectionFactory.setPublisherReturns(true);
+//        //setCacheMode：设置缓存模式，共有两种，CHANNEL和CONNECTION模式。
+//        //1、CONNECTION模式，这个模式下允许创建多个Connection，会缓存一定数量的Connection，每个Connection中同样会缓存一些Channel，
+//        // 除了可以有多个Connection，其它都跟CHANNEL模式一样。
+//        //2、CHANNEL模式，程序运行期间ConnectionFactory会维护着一个Connection，
+//        // 所有的操作都会使用这个Connection，但一个Connection中可以有多个Channel，
+//        // 操作rabbitmq之前都必须先获取到一个Channel，
+//        // 否则就会阻塞（可以通过setChannelCheckoutTimeout()设置等待时间），
+//        // 这些Channel会被缓存（缓存的数量可以通过setChannelCacheSize()设置）；
+//        connectionFactory.setCacheMode(CachingConnectionFactory.CacheMode.CONNECTION);   //设置CONNECTION模式，可创建多个Connection连接
+//        //设置每个Connection中缓存Channel的数量，不是最大的。操作rabbitmq之前（send/receive message等）
+//        // 要先获取到一个Channel.获取Channel时会先从缓存中找闲置的Channel，如果没有则创建新的Channel，
+//        // 当Channel数量大于缓存数量时，多出来没法放进缓存的会被关闭。
+//        connectionFactory.setChannelCacheSize(10);
+//        //单位：毫秒；配合channelCacheSize不仅是缓存数量，而且是最大的数量。
+//        // 从缓存获取不到可用的Channel时，不会创建新的Channel，会等待这个值设置的毫秒数
+//        //同时，在CONNECTION模式，这个值也会影响获取Connection的等待时间，
+//        // 超时获取不到Connection也会抛出AmqpTimeoutException异常。
+//        connectionFactory.setChannelCheckoutTimeout(600);
+//
+//        //仅在CONNECTION模式使用，设置Connection的缓存数量。
+//        connectionFactory.setConnectionCacheSize(3);
+//        //setConnectionLimit：仅在CONNECTION模式使用，设置Connection的数量上限。
+//        connectionFactory.setConnectionLimit(10);
+//        return connectionFactory;
+//    }
 
 
     @Bean(name = "myListenerFactory2")
