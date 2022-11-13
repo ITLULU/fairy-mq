@@ -19,9 +19,11 @@ MessageRecoverer 重试发送失败
 
 
 将异常数据以String形式输出：
+```
 private String getStackTraceAsString(Throwable cause) {
 StringWriter stringWriter = new StringWriter();
 PrintWriter printWriter = new PrintWriter(stringWriter, true);
 cause.printStackTrace(printWriter);
 return stringWriter.getBuffer().toString();
 }
+```

@@ -7,24 +7,32 @@ spring:
     virtual-host:
     listener:
       simple:
-        prefetch: 1
-        concurrency: 5
-        max-concurrency: 10
+        prefetch: 1 # 一次拉取的数量
+        concurrency: 5 # 消费端的监听个数(即@RabbitListener开启几个线程去处理数据。)
+        max-concurrency: 10 # 消费端的监听最大个数
         acknowledge-mode: manual
         retry:
           multiplier: 1
           max-attempts: 3
+          enabled: true
+          initial-interval: 100ms
+          max-interval: 1000ms
+          stateless: true
       direct:
         retry:
           enabled: true
           max-attempts: 3
+        acknowledge-mode: manual
+        auto-startup: true
+      type: simple
 
     # 以及被遗弃 发布者消息确认 代替的是publisher-confirm-type
 #    publisher-confirms: true
     publisher-confirm-type: correlated
     publisher-returns: true
+    connection-timeout: 15000     # 超时时间
 
-rabbbitmq:
+rabbitmq:
   queue:
     routing:
       beijing: beijing-queue
