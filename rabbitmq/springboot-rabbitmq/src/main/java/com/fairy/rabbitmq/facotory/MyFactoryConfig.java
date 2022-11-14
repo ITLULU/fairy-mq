@@ -44,6 +44,14 @@ public class MyFactoryConfig {
         factory.setConnectionFactory(connectionFactory);
         //配置手动确认
         factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+
+        factory.setAdviceChain(
+                RetryInterceptorBuilder
+                        .stateless()
+                        .recoverer(new RejectAndDontRequeueRecoverer())
+                        .retryOperations(rabbitRetryTemplate())
+                        .build()
+        );
         return factory;
     }
 
@@ -57,10 +65,8 @@ public class MyFactoryConfig {
      * 消息成功推送
      */
     @Bean
-    @ConditionalOnBean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-
         // 设置消息从生产者发送至 rabbitmq broker 成功的回调 （保证信息到达 broker）
         rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback() {
             // ack=true:消息成功发送到Exchange
@@ -145,6 +151,7 @@ public class MyFactoryConfig {
         factory.setAdviceChain(
                 RetryInterceptorBuilder
                         .stateless()
+                        //发送到死信队列
                         .recoverer(new RejectAndDontRequeueRecoverer())
                         .retryOperations(rabbitRetryTemplate())
                         .build()
@@ -167,6 +174,7 @@ public class MyFactoryConfig {
             @Override
             public <T, E extends Throwable> void close(RetryContext retryContext, RetryCallback<T, E> retryCallback, Throwable throwable) {
                 // 重试结束的时候调用 （最后一次重试 ）
+                System.out.println("最后一次重试"+throwable.getMessage());
             }
 
             @Override

@@ -30,10 +30,19 @@ public class RabbitMqSender {
      * @param queue
      * @param message
      */
-    public void sendMessge(String queue, String message) {
-        rabbitTemplate.convertAndSend(queue, message);
+    public void sendMessge(String queue, String msg) throws UnsupportedEncodingException {
+        rabbitTemplate.convertAndSend(queue, msg);
+//        Message message =  MessageBuilder.withBody(msg.getBytes("utf-8")).build();
+//        CorrelationData correlationData = new CorrelationData(System.currentTimeMillis()+"");
+//        rabbitTemplate.sendAndReceive(message,correlationData);
     }
-
+    public void sendMessgeWithCorrelation(String queue, String msg) throws UnsupportedEncodingException {
+        Message message =  MessageBuilder.withBody(msg.getBytes("utf-8")).build();
+        CorrelationData correlationData = new CorrelationData(System.currentTimeMillis()+"");
+        Message returnMessage =  MessageBuilder.withBody("return message".getBytes()).build();
+        correlationData.setReturnedMessage(returnMessage);
+        rabbitTemplate.convertAndSend(queue,message,correlationData);
+    }
     /**
      * 发送通配符模式消息
      * @param queue
@@ -51,4 +60,6 @@ public class RabbitMqSender {
         Message message =  MessageBuilder.withBody(msg.getBytes("utf-8")).build();
         rabbitTemplate.sendAndReceive(exchange,routingKey,message);
     }
+
+
 }

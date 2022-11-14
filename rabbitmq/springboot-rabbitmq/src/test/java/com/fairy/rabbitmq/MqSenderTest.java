@@ -22,12 +22,30 @@ public class MqSenderTest {
     private RabbitMqSender rabbitMqSender;
 
     @Test
-    public void sendHelloWorld() throws InterruptedException {
+    public void sendHelloWorldFirst() throws InterruptedException, UnsupportedEncodingException {
+
+        rabbitMqSender.sendMessge(RabbitConstant.QUEUE_Simple, "hello world简单队列模式 发送消息 num" + 0);
+    }
+
+    @Test
+    public void sendHelloWorld() throws InterruptedException, UnsupportedEncodingException {
 
         int num = 20;
         CountDownLatch countDownLatch = new CountDownLatch(num);
         for (int i = 0; i < num; i++) {
             rabbitMqSender.sendMessge(RabbitConstant.QUEUE_Simple, "hello world简单队列模式 发送消息 num" + i);
+            countDownLatch.countDown();
+        }
+        countDownLatch.await();
+    }
+
+    @Test
+    public void sendHelloWorldWithCorrelationData() throws InterruptedException, UnsupportedEncodingException {
+
+        int num = 20;
+        CountDownLatch countDownLatch = new CountDownLatch(num);
+        for (int i = 0; i < num; i++) {
+            rabbitMqSender.sendMessgeWithCorrelation(RabbitConstant.QUEUE_Simple, "hello world简单队列模式 发送消息 num" + i);
             countDownLatch.countDown();
         }
         countDownLatch.await();
