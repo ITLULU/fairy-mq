@@ -43,3 +43,8 @@ rabbitmq:
   exchange:
     routing: routing-topic-exchange
     topic: topic-topic-exchange
+
+logging:
+  level:
+    root: INFO
+    org.springframework.amqp.rabbit: debug

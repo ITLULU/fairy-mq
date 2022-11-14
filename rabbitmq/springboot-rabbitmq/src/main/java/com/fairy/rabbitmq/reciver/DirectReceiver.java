@@ -19,7 +19,7 @@ public class DirectReceiver {
     public void simpelHelloWorldReceive2(String messageStr, Message message, Channel channel) throws IOException {
         System.out.println("simpelHelloWorldReceive2 received message : " + messageStr);
         //模拟消费异常
-        int i = 1 / 0;
+//        int i = 1 / 0;
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
 

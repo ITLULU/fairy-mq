@@ -34,8 +34,11 @@ channel.basicAck(deliveryTag, false);
 
 
 ## 4： 消息convert转换 
+MessagePropertiesConverter 和 MessageConverter
 有一个DefaultMessagePropertiesConverter， ，MessageConverter 其实现有 SimpleMessageConverter（默认）、Jackson2JsonMessageConverter 等。
 如果自定义了消息转换器需要在factory注册上
+
+
 ## 5： 消息确认 不丢失
 ## 6： 消息延迟
 ## 7： 死信队列和 消息拒收nack
@@ -57,3 +60,6 @@ cause.printStackTrace(printWriter);
 return stringWriter.getBuffer().toString();
 }
 ```
+
+## 批量消息发送
+https://blog.csdn.net/u011126891/article/details/54376179想·
