@@ -22,15 +22,34 @@ public class MqSenderTest {
     private RabbitMqSender rabbitMqSender;
 
     @Test
-    public void sendHelloWorld(){
-        rabbitMqSender.sendMessge(RabbitConstant.QUEUE_Simple,"hello world简单队列模式 发送消息");
+    public void sendHelloWorld() throws InterruptedException {
+
+        int num = 20;
+        CountDownLatch countDownLatch = new CountDownLatch(num);
+        for (int i = 0; i < num; i++) {
+            rabbitMqSender.sendMessge(RabbitConstant.QUEUE_Simple, "hello world简单队列模式 发送消息 num" + i);
+            countDownLatch.countDown();
+        }
+        countDownLatch.await();
     }
 
     @Test
     public void sendTopic() throws UnsupportedEncodingException, InterruptedException {
-        CountDownLatch countDownLatch = new CountDownLatch(10);
-        for (int i=0;i<10;i++){
-            rabbitMqSender.sendMessge(RabbitConstant.QUEUE_Topic_Beijing,RabbitConstant.EXCHANGE_Topic_Topic,"china.henan.zhengzhou.20201128","rabbitmq 路由模式 发送消息 num:"+i*10);
+        int num = 20;
+        CountDownLatch countDownLatch = new CountDownLatch(num);
+        for (int i = 0; i < num; i++) {
+            rabbitMqSender.sendMessge(RabbitConstant.EXCHANGE_Topic_Topic, "china.henan.zhengzhou.20201128", "rabbitmq 路由模式 发送消息 num:" + i);
+            countDownLatch.countDown();
+        }
+        countDownLatch.await();
+    }
+
+    @Test
+    public void sendWorkQueue() throws UnsupportedEncodingException, InterruptedException {
+        int num = 20;
+        CountDownLatch countDownLatch = new CountDownLatch(num);
+        for (int i = 0; i < num; i++) {
+            rabbitMqSender.sendMessge(RabbitConstant.QUEUE_WorkQueue, "rabbitmq 工作队列模式 发送消息 num:" + i);
             countDownLatch.countDown();
         }
         countDownLatch.await();

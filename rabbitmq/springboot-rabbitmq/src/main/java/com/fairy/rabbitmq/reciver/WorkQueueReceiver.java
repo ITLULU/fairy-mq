@@ -17,11 +17,11 @@ import java.io.IOException;
  * @date 2022/11/10 22:52
  */
 @Configuration
-public class DirectReceiver {
+public class WorkQueueReceiver {
 
-    @RabbitListener(queues = RabbitConstant.QUEUE_Simple, containerFactory = "myListenerFactory")
-    public void simpelHelloWorldReceive2(String messageStr, Message message, Channel channel) throws IOException {
-        System.out.println("simpelHelloWorldReceive2 received message : " + messageStr);
+    @RabbitListener(queues = RabbitConstant.QUEUE_WorkQueue, containerFactory = "myListenerFactory")
+    public void workQueueReceive2(String messageStr, Message message, Channel channel) throws IOException {
+        System.out.println("workQueueReceive2 received message : " + messageStr);
         //必须手动确认接收才可以下次不在消费
         channel.addConfirmListener(new ConfirmListener() {
             @Override
@@ -55,9 +55,9 @@ public class DirectReceiver {
 //        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
 //    }
 
-    @RabbitListener(queues = RabbitConstant.QUEUE_Simple, containerFactory = "myListenerFactory")
-    public void simpelHelloWorldReceive1(@Payload Message message, Channel channel) throws IOException {
-        System.out.println("simpelHelloWorldReceive1 received message : " + new String(message.getBody(), "utf-8"));
+    @RabbitListener(queues = RabbitConstant.QUEUE_WorkQueue, containerFactory = "myListenerFactory")
+    public void workQueueReceive1(@Payload Message message, Channel channel) throws IOException {
+        System.out.println("workQueueReceive1 received message : " + new String(message.getBody(), "utf-8"));
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
 }

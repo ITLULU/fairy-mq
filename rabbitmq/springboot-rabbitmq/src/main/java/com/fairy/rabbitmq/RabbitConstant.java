@@ -16,6 +16,8 @@ public class RabbitConstant {
     public static final String QUEUE_Topic_Beijing = "beijing-queue";
     public static final String QUEUE_Topic_ShangHai = "shanghai-queue";
 
+    public static final String QUEUE_Fanout ="fanout-queue";
+
     public static final String QUEUE_RPC = "rpc-queue";
     //direct 类型交换机 定向，把消息交给符合指定routing key 的队列
     public static final String EXCHANGE_PUBSUB_Direct = "pubsub-direct-exchange";
@@ -46,4 +48,6 @@ public class RabbitConstant {
 
     public static final String QUEUE_QUORUM = "quorum_queue";
     public static final String QUEUE_STREAM = "stream_queue";
+
+
 }

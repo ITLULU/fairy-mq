@@ -46,4 +46,9 @@ public class RabbitMqSender {
         CorrelationData correlationData = new CorrelationData(System.currentTimeMillis()+"");
         rabbitTemplate.sendAndReceive(exchange,routingKey,message,correlationData);
     }
+
+    public void sendMessge( String exchange, String routingKey, String msg) throws UnsupportedEncodingException {
+        Message message =  MessageBuilder.withBody(msg.getBytes("utf-8")).build();
+        rabbitTemplate.sendAndReceive(exchange,routingKey,message);
+    }
 }

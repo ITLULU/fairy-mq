@@ -41,8 +41,23 @@ public class RoutingReciver {
                             durable = "true",
                             type = ExchangeTypes.TOPIC),
                     key = "china.#")}, id = "autoStart")
-    public void receive(Message message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
-        System.out.println("路由监听接受到发送者发送的信息：" + new String(message.getBody()));
+    public void receive1(Message message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
+        System.out.println("receive1路由监听接受到发送者发送的信息：" + new String(message.getBody()));
+//        int i = 1 / 0;
+        // 确认消息
+        channel.basicAck(deliveryTag, false);
+    }
+
+    @RabbitListener(containerFactory = "myListenerFactory", bindings = {
+            @QueueBinding(
+                    value = @Queue(value = "${rabbitmq.queue.routing.shanghai}", durable = "true", autoDelete = "false"),
+                    exchange = @Exchange(
+                            value = "${rabbitmq.exchange.routing}",
+                            durable = "true",
+                            type = ExchangeTypes.TOPIC),
+                    key = "china.#")}, id = "autoStart-shanghai")
+    public void receive2(Message message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
+        System.out.println("receive2路由监听接受到发送者发送的信息：" + new String(message.getBody()));
 //        int i = 1 / 0;
         // 确认消息
         channel.basicAck(deliveryTag, false);
