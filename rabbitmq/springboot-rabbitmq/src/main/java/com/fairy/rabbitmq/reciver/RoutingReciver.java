@@ -10,8 +10,11 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Headers;
+import org.springframework.messaging.handler.annotation.Payload;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * 路由 通配符 监听
@@ -41,8 +44,10 @@ public class RoutingReciver {
                             durable = "true",
                             type = ExchangeTypes.TOPIC),
                     key = "china.#")}, id = "autoStart")
-    public void receive1(Message message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
-        System.out.println("receive1路由监听接受到发送者发送的信息：" + new String(message.getBody()));
+    public void receive(@Payload Message message, Channel channel,
+                        @Headers Map<String, Object> headers,
+                        @Header(AmqpHeaders.RECEIVED_ROUTING_KEY) String routingKey, @Header(AmqpHeaders.MESSAGE_ID) String messageId, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
+        System.out.println("路由监听接受到发送者发送的信息：" + new String(message.getBody()));
 //        int i = 1 / 0;
         // 确认消息
         channel.basicAck(deliveryTag, false);
