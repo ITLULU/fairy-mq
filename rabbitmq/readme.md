@@ -41,7 +41,32 @@ MessagePropertiesConverter 和 MessageConverter
 
 ## 5： 消息确认 不丢失
 ## 6： 消息延迟
+通TTL和死信队列实现延迟消息
 ## 7： 死信队列和 消息拒收nack
+
+```
+被设置了TTL的消息在过期后会成为 Dead Letter。其实在 RabbitMQ 中，一共有三种消息的“死亡”形式：
+
+消息被拒绝（basic.reject或basic.nack）并且requeue = false.
+消息 TTL 过期
+队列达到最大长度（队列满了，无法再添加数据到mq中）
+```
+死信处理过程
+
+```
+DLX 也是一个正常的 Exchange，和一般的 Exchange 没有区别，它能在任何的队列上被指定，实际上就是设置某个队列的属性。
+当这个队列中有死信时，RabbitMQ 就会自动的将这个消息重新发布到设置的 Exchange上去，进而被路由到另一个队列。
+可以监听这个队列中的消息做相应的处理。
+```
+
+定义业务（普通）队列的时候指定参数：
+```
+x-dead-letter-exchange: 用来设置死信后发送的交换机
+x-dead-letter-routing-key：用来设置死信的 routingKey
+```
+
+
+
 ## 8: 消息过多时，消费不过来时出现的消息堆积现象如何处理
 ## 9： 消息消费批量数据 与simple get
 ## 10： 发送者发送消息的机制 和消费者消费消息的机制
@@ -65,4 +90,8 @@ return stringWriter.getBuffer().toString();
 x
 
 ## 批量消息发送
-https://blog.csdn.net/u011126891/article/details/54376179想·
+https://blog.csdn.net/u011126891/article/details/54376179
+
+## rabbitmq监控
+
+## rabbitmq插件 延迟消息实现
