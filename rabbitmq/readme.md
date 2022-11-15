@@ -130,3 +130,7 @@ https://blog.csdn.net/u011126891/article/details/54376179
 ## rabbitmq监控
 
 ## rabbitmq插件 延迟消息实现
+
+延迟插件实现逻辑
+
+![输入图片说明](images/delayQueupluginimage.png)
