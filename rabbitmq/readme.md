@@ -42,6 +42,41 @@ MessagePropertiesConverter 和 MessageConverter
 ## 5： 消息确认 不丢失
 ## 6： 消息延迟
 通TTL和死信队列实现延迟消息
+
+有两种方式设置 TTL 值，
+第一种是在创建队列的时候设置队列的 “x-message-ttl” 属性
+
+```
+@Bean
+public Queue delayQueue() {
+    String queueName = "delay_queue";
+    Map<String, Object> args = new HashMap<>(1);
+    args.put("x-message-ttl", "6000");
+    return new Queue(queueName, true, false, false, args);
+}
+```
+2：另一种方式是针对每条消息设置 TTL
+
+```
+rabbitTemplate.convertAndSend(exchange, routingKey, (message) -> {
+ message.getMessageProperties().setExpiration("6000");
+ return message;
+});
+```
+区别：
+
+设置了队列的 TTL 属性，那么一旦消息过期，就会被队列丢弃
+
+给消息设置 TTL 属性，消息过期也不一定会马上丢弃，因为消息是否过期是在即将投递到消费者之前判定的，如果队列存在消息积压问题，那么已过期的消息可能还会存活较长些时间
+
+
+如果单独在队列上设置TTL，，每增加一个新的时间需求，就要新增一个队列。如需要一个小时后处理，那么就需要增加 TTL 为一个小时的队列，如果此时消息的过期时间不确定或者消息过期时间维度过多，在消费端我们就要去监听多个消息队列，岂不是要增加无数个队列才能满足需求？？
+
+所以一般都会在发送的消息上根据需求设置指定TTL时间，
+但是在发送的消息上设置消息过期时间也存在问题，因为如果因为队列消息堆积，就会出现消息过期也不一定会马上丢弃。消息到了过期时间可能并不会按时“死亡“，因为 RabbitMQ 只会检查第一个消息是否过期，如果过期则丢到死信队列，索引如果第一个消息的延时时长很长，而第二个消息的延时时长很短，则第二个消息并不会优先得到执行。
+
+如果要实现在消息粒度上添加TTL，并使其在设置的TTL时间及时死亡，可以使用 RabbitMQ 的 rabbitmq_delayed_message_exchange插件的方式实现。
+
 ## 7： 死信队列和 消息拒收nack
 
 ```
