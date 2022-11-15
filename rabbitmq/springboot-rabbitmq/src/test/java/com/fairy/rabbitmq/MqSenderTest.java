@@ -72,4 +72,26 @@ public class MqSenderTest {
         }
         countDownLatch.await();
     }
+
+    @Test
+    public void producer_B() throws Exception {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String exchange = "delay_exchange";
+        String routingKey = "bind.delay.B";
+        String msg = "我是第一条消息";
+        // 延迟时间
+        String delayTime = "6000";
+
+        System.out.println("当前时间：" + simpleDateFormat.format(new Date()) + "开始发送消息：" + msg + "  延迟的时间为：" + delayTime);
+        rabbitTemplate.convertAndSend(exchange, routingKey, msg, new MyMessagePostProcessor(delayTime));
+
+        msg = "我是第二条消息";
+        // 修改延迟时间
+        delayTime = "3000";
+
+        System.out.println("当前时间：" + simpleDateFormat.format(new Date()) + "开始发送消息：" + msg + "  延迟的时间为：" + delayTime);
+        rabbitTemplate.convertAndSend(exchange, routingKey, msg, new MyMessagePostProcessor(delayTime));
+
+        Thread.sleep(30000L);
+    }
 }
