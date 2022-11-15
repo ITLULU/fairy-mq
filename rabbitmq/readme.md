@@ -134,3 +134,21 @@ https://blog.csdn.net/u011126891/article/details/54376179
 延迟插件实现逻辑
 
 ![输入图片说明](images/delayQueupluginimage.png)
+
+延迟插件的局限性：
+https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/issues/7
+
+```
+关闭开启插件
+rabbitmq-plugins disable/enable rabbitmq_delayed_message_exchange
+
+```
+
+
+```
+DLX + TTL 和 Delayed Message 插件这两种 RabbitMQ 延迟消息解决方案都有一定的局限性。
+
+如果你的消息 TTL 是相同的，使用 DLX + TTL 的这种方式是没问题的，对于我来说目前还是优选。
+
+如果你的消息 TTL 过期值是可变的，可以尝试使用 Delayed Message 插件，对于某些应用而言它可能很好用，对于那些可能会达到高容量延迟消息的应用而言，则不是很友好。
+```
