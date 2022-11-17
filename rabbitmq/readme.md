@@ -193,12 +193,12 @@ return stringWriter.getBuffer().toString();
 
 x
 
-## 批量消息发送
+## 12.批量消息发送
 https://blog.csdn.net/u011126891/article/details/54376179
 
-## rabbitmq监控
+## 13.rabbitmq监控
 
-## rabbitmq插件 延迟消息实现
+## 14. rabbitmq插件 延迟消息实现
 
 延迟插件实现逻辑
 
@@ -221,7 +221,7 @@ DLX + TTL 和 Delayed Message 插件这两种 RabbitMQ 延迟消息解决方案�
 
 如果你的消息 TTL 过期值是可变的，可以尝试使用 Delayed Message 插件，对于某些应用而言它可能很好用，对于那些可能会达到高容量延迟消息的应用而言，则不是很友好。
 ```
-## 消息幂等性
+## 15.消息幂等性
 为防止网络中断等原因造成的消息重试发送到消费者，消费者接收到消息后，重复消费的现象，解决消息重复消费，一般在实际业务开发中，
 
 ```
@@ -255,4 +255,39 @@ public void receiver(@Payload String msg, @Headers Map<String,Object> headers) {
 ```
 
 
+## 16.事务
+1、事务模式不能与确认模式和回退模式共存（删除确认模式和回退模式的配置）
 
+2、开启rabbitmq对事务的支持setChannelTransacted(true)、开启消息回退setMandatory(true)
+
+3、注入RabbitTransactionManager事务管理器
+
+
+
+```
+// 开启rabbitmq对事物的支持
+rabbitTemplate.setChannelTransacted(true);
+
+// 开启消息回退
+rabbitTemplate.setMandatory(true);
+```
+注入事务管理器
+```
+@Bean
+public RabbitTransactionManager rabbitTransactionManager(RabbitTemplate rabbitTemplate) {
+
+RabbitTransactionManager manager = new RabbitTransactionManager();
+ConnectionFactory factory = rabbitTemplate.getConnectionFactory();
+manager.setConnectionFactory(factory);
+
+return manager;
+}
+```
+
+## 17.队列限流
+什么是队列限流？
+
+当RabbitMQ有大流量的消息来到队列时，我们希望消息可以在Consumer的承受范围内进行逐个消费，例如每次消费100条、1000条
+Spring环境下如何配置队列限流？
+
+在Conusmer端的监听容器中设置prefetch参数，代表Conusmer一次性去队列中最大能拉取多少条消息消费；
