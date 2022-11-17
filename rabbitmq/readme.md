@@ -194,7 +194,26 @@ return stringWriter.getBuffer().toString();
 x
 
 ## 12.批量消息发送
-https://blog.csdn.net/u011126891/article/details/54376179
+
+配置：
+
+```
+listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 250
+        consumer-batch-enabled: true    #开启批量消费
+        batch-size: 16       
+```
+配置SimpleRabbitListenerContainerFactory  containerFactory.setBatchListener(true);
+
+```
+@RabbitHandler
+@RabbitListener(queues = "my-consume-queue")
+public void onMessage(List<Message> messages, Channel channel) 
+```
+
+ 消息批处理比较适合像处理结果批量入库批量操作效率高于单独操作的时候, 如处理结果批量更新到Mysql, 这里说一下ack与Kafka批处理的区别, Kafka批处理ack的时候提交的是offset, 而这里的批处理只针对单个消息的tag, 必须每个都要ack.
 
 ## 13.rabbitmq监控
 
