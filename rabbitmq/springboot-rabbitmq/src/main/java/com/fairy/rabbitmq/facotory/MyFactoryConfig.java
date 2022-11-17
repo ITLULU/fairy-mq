@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer;
+import org.springframework.amqp.rabbit.transaction.RabbitTransactionManager;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +43,7 @@ public class MyFactoryConfig {
                 System.out.println("异常消息:" + t.getMessage());
             }
         });
+
         factory.setConnectionFactory(connectionFactory);
         //配置手动确认
         factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
@@ -99,9 +101,30 @@ public class MyFactoryConfig {
         rabbitTemplate.setMandatory(true);
         // 设置发送时的转换
         // rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+
+        //配置事务 需要删除 消息确认 和 return
+        // 开启rabbitmq对事物的支持
+//        rabbitTemplate.setChannelTransacted(true);
+
+        // 开启消息回退
+//        rabbitTemplate.setMandatory(true);
         return rabbitTemplate;
     }
-
+    /**
+     * 注入RabbitMQ事务管理器
+     *
+     * @param
+     * @return
+     */
+//    @Bean
+//    public RabbitTransactionManager rabbitTransactionManager(RabbitTemplate rabbitTemplate) {
+//
+//        RabbitTransactionManager manager = new RabbitTransactionManager();
+//        ConnectionFactory factory = rabbitTemplate.getConnectionFactory();
+//        manager.setConnectionFactory(factory);
+//
+//        return manager;
+//    }
 
 
     @Bean(name = "myListenerFactory2")

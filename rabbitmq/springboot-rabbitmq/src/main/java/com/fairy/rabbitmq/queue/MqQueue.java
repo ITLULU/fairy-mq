@@ -235,24 +235,13 @@ public class MqQueue {
         return new TopicExchange("rabbit_work_exchange");
     }
 
-    @Bean
-    public Queue workNormalQueue() {
-        String queueName = "nomarl_work_queue";
-        // 要指定的死信交换机
-        String deadExchangeName = "rabbit_dlx_exchange";
-        // 路由键  这里模拟交给死信交换机下的 A 队列中
-        String deadRoutingKey = "routing.a.key";
-//        在正常工作队列 work_queue 的配置中注入了 Map<String,Object> 参数，用来配置
-//        x-dead-letter-exchange 标识一个交换机
-//        x-dead-letter-routing-key 来标识一个绑定键。
-        Map<String, Object> args = new HashMap<>(2);
-        args.put("x-dead-letter-exchange", deadExchangeName);
-        args.put("x-dead-letter-routing-key", deadRoutingKey);
-        return new Queue(queueName, true, false, false, args);
-    }
+
     @Bean
     public Binding bindWorkQueue() {
         String routingKey = "#";
         return BindingBuilder.bind(workQueue()).to(workExchange()).with(routingKey);
     }
+
+
+
 }
