@@ -77,6 +77,11 @@ public class MyFactoryConfig {
                 System.out.println("ConfirmCallback:     " + "相关数据：" + correlationData);
                 System.out.println("ConfirmCallback:     " + "确认是否到达交换机：" + ack);
                 System.out.println("ConfirmCallback:     " + "原因：" + cause);
+                if (ack) {
+                    System.out.println("success: 消息成功发送到Exchange交换机" );
+                }else{
+                    System.out.println("error: " + cause);
+                }
             }
         });
         // 设置信息从交换机发送至 queue 失败的回调
