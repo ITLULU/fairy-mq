@@ -15,7 +15,7 @@ public class WorkQueueConsumer {
 
         Connection connection = RabbitmqUtils.getConnection();
         final Channel channel = connection.createChannel();
-
+        //这些队列都是 classic
         channel.queueDeclare(RabbitConstant.QUEUE_WorkQueue, true, false, false, null);
 
         //如果不写basicQos（1），则自动MQ会将所有请求平均发送给所有消费者

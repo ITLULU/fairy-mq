@@ -2,6 +2,7 @@ package com.fairy.rabbitmq.queue;
 
 import com.fairy.rabbitmq.RabbitConstant;
 import org.springframework.amqp.core.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

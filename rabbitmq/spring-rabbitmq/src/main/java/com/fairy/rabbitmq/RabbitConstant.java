@@ -6,6 +6,8 @@ package com.fairy.rabbitmq;
  */
 public class RabbitConstant {
     public static final String QUEUE_Simple = "simple-queue";
+    public static final String QUEUE_QUORUM_Simple = "simple-queue";
+
     public static final String QUEUE_WorkQueue = "worke-queue";
     public static final String QUEUE_Pubsu_Beijing = "beijing-queue";
     public static final String QUEUE_Pubsu_Shanghai = "shanghai-queue";

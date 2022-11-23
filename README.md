@@ -16,6 +16,10 @@ rabbitmq的普通集群之后将共享队列，交换机这些信息，如果一
 
 企业搭建
 
+`//这些队列都是 classic
+channel.queueDeclare(RabbitConstant.QUEUE_WorkQueue, true, false, false, null);
+`
+
 
 ## rocketMq
 并发多线程消费消息的时候加锁，一个队列一个队列的消费
