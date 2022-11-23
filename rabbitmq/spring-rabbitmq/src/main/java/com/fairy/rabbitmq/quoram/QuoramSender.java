@@ -9,6 +9,7 @@ import com.rabbitmq.client.Connection;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author 鹿少年
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public class QuoramSender {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, TimeoutException {
         //获取TCP长连接
         Connection conn = RabbitmqUtils.getConnection();
         //创建通信“通道”，相当于TCP中的虚拟连接
