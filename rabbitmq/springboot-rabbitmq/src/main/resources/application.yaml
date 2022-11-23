@@ -45,7 +45,11 @@ rabbitmq:
     topic: topic-topic-exchange
   delay:
     normal:
-
+      exchange: x_delay_exchange
+      routingKey: bind.delay.A
+      queue: delay_queue_A
+      dlxExchange: dlx_exchange
+      bindDleRoutingKey: "#.A"
     plugins:
       exchange: x_delay_exchange
       routingKey: bind.delay.C

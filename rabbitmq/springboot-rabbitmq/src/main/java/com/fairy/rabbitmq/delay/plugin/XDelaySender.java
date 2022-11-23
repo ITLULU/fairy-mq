@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Component
-public class DelaySender {
+public class XDelaySender {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;

@@ -15,7 +15,7 @@ import java.util.Date;
  * 延迟队列消费
  */
 @Component
-public class DelayConsumer {
+public class XDelayConsumer {
 
     @RabbitListener(queues = "delay_queue_C")
     public void receiverC(@Payload String msg, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
