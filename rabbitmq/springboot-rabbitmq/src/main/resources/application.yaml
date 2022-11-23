@@ -43,6 +43,15 @@ rabbitmq:
   exchange:
     routing: routing-topic-exchange
     topic: topic-topic-exchange
+  delay:
+    normal:
+
+    plugins:
+      exchange: x_delay_exchange
+      routingKey: bind.delay.C
+      type: x-delayed-message
+      queue: delay_queue_C
+
 
 logging:
   level:
