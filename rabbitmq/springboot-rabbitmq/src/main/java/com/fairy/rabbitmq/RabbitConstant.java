@@ -16,7 +16,7 @@ public class RabbitConstant {
     public static final String QUEUE_Topic_Beijing = "beijing-queue";
     public static final String QUEUE_Topic_ShangHai = "shanghai-queue";
 
-    public static final String QUEUE_Fanout ="fanout-queue";
+    public static final String QUEUE_Fanout = "fanout-queue";
 
     public static final String QUEUE_RPC = "rpc-queue";
     //direct 类型交换机 定向，把消息交给符合指定routing key 的队列
@@ -26,12 +26,12 @@ public class RabbitConstant {
     //topic类型交换机 通配符，把消息交给符合routing pattern（路由模式） 的队列
     public static final String EXCHANGE_ROUTING_Topic = "routing-topic-exchange";
     //定向
-    public static final String EXCHANGE_ROUTING_direct= "routing-direct-exchange";
+    public static final String EXCHANGE_ROUTING_direct = "routing-direct-exchange";
     //广播
-    public static final String EXCHANGE_ROUTING_Fanout= "routing-fanout-exchange";
+    public static final String EXCHANGE_ROUTING_Fanout = "routing-fanout-exchange";
 
 
-    public static final String EXCHANGE_Topic_Topic= "topic-topic-exchange";
+    public static final String EXCHANGE_Topic_Topic = "topic-topic-exchange";
 
     public static final String host = "node01";
     public static final String userName = "admin";
@@ -48,6 +48,8 @@ public class RabbitConstant {
 
     public static final String QUEUE_QUORUM = "quorum_queue";
     public static final String QUEUE_STREAM = "stream_queue";
+
+    public static final String death_EXCHAGE = "rabbit_dlx_exchange";
 
 
 }

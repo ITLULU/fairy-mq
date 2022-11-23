@@ -4,7 +4,6 @@ package com.fairy.rabbitmq.send;
  * 消息发送者
  */
 
-import com.fairy.rabbitmq.supply.MQSenderSupplier;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
@@ -68,21 +67,21 @@ public class RabbitMqSender {
     }
 
 
-    @Autowired
-    private ThreadPoolTaskExecutor executor;
-
-    public String sendMessage(String message) {
-        CompletableFuture<String> resultCompletableFuture =
-                CompletableFuture.supplyAsync(new MQSenderSupplier(message), executor);
-        try {
-            String result = resultCompletableFuture.get();
-            return result;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+//    @Autowired
+//    private ThreadPoolTaskExecutor executor;
+//
+//    public String sendMessage(String message) {
+//        CompletableFuture<String> resultCompletableFuture =
+//                CompletableFuture.supplyAsync(new MQSenderSupplier(message), executor);
+//        try {
+//            String result = resultCompletableFuture.get();
+//            return result;
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
 }

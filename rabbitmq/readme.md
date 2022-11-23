@@ -232,6 +232,10 @@ rabbitmq-plugins disable/enable rabbitmq_delayed_message_exchange
 
 ```
 
+插件下载：
+rabbitmq 启动报错 unknown exchange type ‘x-delayed-message
+下载地址：
+https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases/tag/v3.8.0
 
 ```
 DLX + TTL 和 Delayed Message 插件这两种 RabbitMQ 延迟消息解决方案都有一定的局限性。

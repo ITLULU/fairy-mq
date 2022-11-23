@@ -1,6 +1,7 @@
 package com.fairy.rabbitmq.facotory;
 
 import org.springframework.amqp.core.AcknowledgeMode;
+import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
@@ -213,10 +214,15 @@ public class MyFactoryConfig {
     }
 
 
-    @Bean
-    public MessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
+//    @Bean
+//    public MessageConverter messageConverter() {
+//        return new Jackson2JsonMessageConverter();
+//    }
 
+    @Bean
+    public AmqpAdmin amqpAdmin(ConnectionFactory connectionFactory){
+        AmqpAdmin amqpAdmin = new RabbitAdmin(connectionFactory);
+        return amqpAdmin;
+    }
 
 }

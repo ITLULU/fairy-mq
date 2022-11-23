@@ -1,6 +1,7 @@
 package com.fairy.rabbitmq.reciver;
 
 import com.rabbitmq.client.Channel;
+import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -11,7 +12,14 @@ import java.io.IOException;
 @Component
 public class RejectReciever {
 
-    @RabbitListener(queues = "normal_work_queue")
+    /**
+     * 这种方式会自动创建不存在的 normal_work_queue
+     * @param msg
+     * @param channel
+     * @param deliveryTag
+     * @throws IOException
+     */
+    @RabbitListener(queuesToDeclare = @Queue("normal_work_queue"))
     public void receiver(String msg, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
         System.out.println("工作队列 normal_ work_queue 消费信息：" + msg);
         System.out.println("将消息拒绝放回队列中");

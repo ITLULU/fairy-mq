@@ -1,5 +1,8 @@
 package com.fairy.rabbitmq.facotory;
 
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.support.DefaultMessagePropertiesConverter;
 import org.springframework.amqp.rabbit.support.MessagePropertiesConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -133,4 +136,6 @@ public class QueueConfig {
     public MessagePropertiesConverter getMessagePropertiesConverter() {
         return new DefaultMessagePropertiesConverter();
     }
+
+
 }
