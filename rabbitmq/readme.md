@@ -39,7 +39,29 @@ MessagePropertiesConverter 和 MessageConverter
 如果自定义了消息转换器需要在factory注册上
 
 
-## 5： 消息确认 不丢失
+## 5：消息传递可靠性与 消息确认 不丢失
+消息传递的可靠性
+
+`场景 1：生产者与消费者互不感知，怎么确认生产者已将消息投递到 RabbitMQ 服务端，又如何确认消费者已经消费了该消息？
+`
+
+消息 Publish 可靠性
+```
+首先来谈谈 Publisher 的可靠发送，如果使用标准 AMQP 0-9-1，保证消息不丢失的唯一方法是使用事务，
+但使用事务模式会导致服务端吞吐量急剧下降。为了弥补这一点，AMQP 引入了确认机制。它模仿了协议中已经存在的消费者 ACK 确认机制。
+Publisher 通过发送 confirm.select 命令开启确认模式，随后 RabbitMQ 服务端在收到消息后会进行确认，
+Publisher 会收到服务端发送的确认回复。要注意：无法在通道中同时使用确认模式与事务模式，只可二选一。
+
+```
+
+消息 Consume 可靠性
+```
+再说说如何保证队列中消息至少被消费一次。当 RabbitMQ 交付消息给 Consumer 时，需要确认 Message 已被投递到 Consumer。
+Acknowledgements 作用，Consumer 发送确认消息通知 RabbitMQ 服务端已收到消息或已成功消费消息。
+```
+看下消息生产、消费的流程图：
+
+
 ## 6： 消息延迟
 通TTL和死信队列实现延迟消息
 
@@ -315,6 +337,7 @@ Spring环境下如何配置队列限流？
 
 在Conusmer端的监听容器中设置prefetch参数，代表Conusmer一次性去队列中最大能拉取多少条消息消费；
 
+## rabbitmq 的分片
 
 ## 参考资料
 https://www.cnblogs.com/wumingxiaoyao/p/8274177.html
