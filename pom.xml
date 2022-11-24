@@ -13,6 +13,9 @@
         <module>fairy-rabbitMq</module>
         <module>rabbitmq</module>
         <module>spring-rabbitmq</module>
+        <module>kafka</module>
+        <module>rocketmq</module>
+        <module>springboot-rocketmq</module>
     </modules>
     <packaging>pom</packaging>
     <parent>
