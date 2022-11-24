@@ -314,3 +314,7 @@ return manager;
 Spring环境下如何配置队列限流？
 
 在Conusmer端的监听容器中设置prefetch参数，代表Conusmer一次性去队列中最大能拉取多少条消息消费；
+
+
+## 参考资料
+https://www.cnblogs.com/wumingxiaoyao/p/8274177.html
