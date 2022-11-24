@@ -52,4 +52,5 @@ public class RabbitConstant {
     public static final String death_EXCHAGE = "rabbit_dlx_exchange";
 
 
+    public static final String MINOR_QUEUE = "MINOR_QUEUE";
 }
