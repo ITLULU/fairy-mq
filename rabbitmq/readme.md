@@ -337,7 +337,11 @@ Spring环境下如何配置队列限流？
 
 在Conusmer端的监听容器中设置prefetch参数，代表Conusmer一次性去队列中最大能拉取多少条消息消费；
 
-## rabbitmq 的分片
+## rabbitmq 的分片与不同cluster之间的消息共享
+
+##镜像队列配置
+单个节点配置，全部配置，
+可以通过代码配置或者直接命令行配置
 
 ## 参考资料
 https://www.cnblogs.com/wumingxiaoyao/p/8274177.html
