@@ -1,8 +1,8 @@
 package com.fairy.kafka.handler;
 
-import com.fairy.common.exception.CommonException;
 import com.fairy.kafka.model.po.ConsumerRecordPO;
 import com.fairy.kafka.service.ConsumerRecordService;
+import com.fairy.kafka.utils.CommonException;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

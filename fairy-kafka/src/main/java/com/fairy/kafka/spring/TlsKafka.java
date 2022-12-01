@@ -36,15 +36,15 @@ public class TlsKafka {
             //            DEFAULT_SSL_PROTOCOL = "TLSv1.2";
             //            DEFAULT_SSL_ENABLED_PROTOCOLS = "TLSv1.2";
             //        }
-            properties.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG,"TLSv1.2,TLSv1.3");
-            properties.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG,"key-store");
-            properties.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG,getConfigString(tlsConfig, "password", "key-store-password"));
-            properties.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG,getConfigString(tlsConfig, "password", "key-password"));
-            properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG,tlsConfig.getString("trust-store"));
+            properties.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, "TLSv1.2,TLSv1.3");
+            properties.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, "key-store");
+            properties.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getConfigString(tlsConfig, "password", "key-store-password"));
+            properties.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, getConfigString(tlsConfig, "password", "key-password"));
+            properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, tlsConfig.getString("trust-store"));
 
-            properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG,getConfigString(tlsConfig, "password", "trust-store-password"));
+            properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, getConfigString(tlsConfig, "password", "trust-store-password"));
         } else {
-            properties.put( CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "PLAINTEXT");
+            properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "PLAINTEXT");
         }
 
         return new KafkaConsumer<>(properties);
@@ -72,9 +72,9 @@ public class TlsKafka {
     }
 
 
-    public KafkaProducer<Long, String> createKafkaProducer(Config tlsConfig,boolean mtls) {
+    public KafkaProducer<Long, String> createKafkaProducer(Config tlsConfig, boolean mtls) {
         String clientId = "proclog-emitter-" + UUID.randomUUID();
-        final Properties properties = commonProductProperties(clientId,"node01",9092);
+        final Properties properties = commonProductProperties(clientId, "node01", 9092);
 
         boolean tlsEnabled = Boolean.parseBoolean(System.getenv().getOrDefault("MESSAGE_BUS_KF_TLS_ENABLED", "false"));
         properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, tlsEnabled ? "SSL" : "PLAINTEXT");
@@ -83,18 +83,18 @@ public class TlsKafka {
             properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
             properties.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, SslConfigs.DEFAULT_SSL_ENABLED_PROTOCOLS);
             properties.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, tlsConfig.getString("key-store"));
-                    properties.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getConfigString(tlsConfig, "password", "key-store-password"));
+            properties.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getConfigString(tlsConfig, "password", "key-store-password"));
             properties.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, getConfigString(tlsConfig, "password", "key-password"));
-            properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, tlsConfig.getString( "trust-store"));
+            properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, tlsConfig.getString("trust-store"));
             properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, getConfigString(tlsConfig, "password", "trust-store-password"));
-        }else {
+        } else {
             properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "PLAINTEXT");
         }
         return new KafkaProducer<>(properties);
 
     }
 
-    private Properties commonProductProperties(String clientId,String kafkaHost, Integer kafkaPort) {
+    private Properties commonProductProperties(String clientId, String kafkaHost, Integer kafkaPort) {
         final Properties properties = new Properties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost + ":" + kafkaPort);
         properties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
@@ -107,5 +107,23 @@ public class TlsKafka {
         properties.put(ProducerConfig.RETRIES_CONFIG, 0); // Kafka retries are handled by the Emitter
         properties.put(ProducerConfig.ACKS_CONFIG, "all"); // Wait for acks from all insync replicas
         return properties;
+    }
+    public static Config getTlsConfig(Config conf,String fileKey){
+        return ConfigFactory.parseResources(conf.getString(fileKey));
+    }
+    public static void main(String[] args) {
+        final Config tlsConfig = ConfigFactory.parseResources("config.conf")
+                .resolve()
+                .getConfig("com.ericsson.activation.tls");
+
+
+        System.out.println(String.format("config:%s",tlsConfig.getString("tlsConfigFile")));
+        System.out.println(String.format("config:%s",tlsConfig));
+        System.out.println(String.format("tlsfile:%s",getTlsConfig(tlsConfig, "tlsConfigFile")));
+
+        System.out.println(String.format("jmxconfig:%s",tlsConfig.getConfig("jmx")));
+
+        System.out.println(String.format("kafkaconfig:%s",tlsConfig.getConfig("kafka")));
+
     }
 }

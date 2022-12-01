@@ -1,15 +1,14 @@
 package com.fairy.kafka.listenner;
 
-import com.fairy.common.exception.CommonException;
 import com.fairy.kafka.handler.RecordHandler;
 import com.fairy.kafka.model.po.ConsumerRecordPO;
+import com.fairy.kafka.utils.CommonException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.TopicPartition;
-import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
@@ -36,8 +35,10 @@ public class KafkaListner {
     @Value("${max.retry.count}")
     private Integer retryCount;
 
-    /**volatile 可以标识多线程对该变量是共享可见的*/
-    private  AtomicInteger count = new AtomicInteger(0);
+    /**
+     * volatile 可以标识多线程对该变量是共享可见的
+     */
+    private AtomicInteger count = new AtomicInteger(0);
 
     /**
      * 配置多个消费组
@@ -61,9 +62,9 @@ public class KafkaListner {
             //手动提交ack 移动偏移量
             ack.acknowledge();
         } catch (Throwable e) {
-            log.error("consumer Listener监听消费消息异常:{}",e);
-            if(count.getAndIncrement()>=retryCount){
-              listenerUtil.pauseConsumer(orderListener);
+            log.error("consumer Listener监听消费消息异常:{}", e);
+            if (count.getAndIncrement() >= retryCount) {
+                listenerUtil.pauseConsumer(orderListener);
             }
             throw CommonException.create(e);
         }

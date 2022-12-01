@@ -1,9 +1,9 @@
 package com.fairy.kafka.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.fairy.common.response.CommonResponse;
 import com.fairy.kafka.model.dto.OrderDto;
 import com.fairy.kafka.service.KafkaSender;
+import com.fairy.kafka.utils.CommonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.support.KafkaHeaders;
