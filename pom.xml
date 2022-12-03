@@ -8,8 +8,6 @@
     <artifactId>fairy-MQ</artifactId>
     <version>1.0</version>
     <modules>
-        <module>fairy-kafka</module>
-        <module>fairy-rocketMq</module>
         <module>rabbitmq</module>
         <module>kafka</module>
         <module>rocketmq</module>
