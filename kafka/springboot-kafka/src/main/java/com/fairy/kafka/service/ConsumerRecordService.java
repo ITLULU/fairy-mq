@@ -1,9 +1,7 @@
 package com.fairy.kafka.service;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fairy.kafka.model.po.ConsumerRecordPO;
-import org.springframework.stereotype.Service;
 
 /**
  * @author hll

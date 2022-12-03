@@ -1,4 +1,4 @@
-package com.fairy.kafka;
+package kafka;
 
 /**
  * @author hll
@@ -7,6 +7,7 @@ package com.fairy.kafka;
  */
 
 import com.alibaba.fastjson.JSON;
+import com.fairy.kafka.KafkaApp;
 import com.fairy.kafka.model.dto.OrderDto;
 import com.fairy.kafka.service.KafkaSender;
 import org.junit.jupiter.api.Test;

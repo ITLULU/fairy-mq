@@ -12,7 +12,6 @@ import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
-import java.io.File;
 import java.util.Properties;
 import java.util.UUID;
 
