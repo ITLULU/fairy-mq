@@ -10,12 +10,9 @@
     <modules>
         <module>fairy-kafka</module>
         <module>fairy-rocketMq</module>
-        <module>fairy-rabbitMq</module>
         <module>rabbitmq</module>
-        <module>spring-rabbitmq</module>
         <module>kafka</module>
         <module>rocketmq</module>
-        <module>springboot-rocketmq</module>
     </modules>
     <packaging>pom</packaging>
     <parent>
